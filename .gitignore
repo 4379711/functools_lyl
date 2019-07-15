@@ -1,4 +1,4 @@
 dist/*
-functools_lyl.egg-info/*
+*.egg-info/*
 .idea/*
 *.bak
