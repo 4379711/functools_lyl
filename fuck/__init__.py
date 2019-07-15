@@ -9,12 +9,12 @@
         from functools_lyl import schedule_lyl
 
     2.mylog:日志记录,自动切割，压缩等
-    使用方法: from functoos_lyl.mylog import My_log
+    使用方法: from functools_lyl.mylog import My_log
               logger=My_log('dirpath').getlogger()
 
     3.timeslimit :控制函数执行频率
     使用方法：
-        from functoos_lyl.timeslimit import CallTimesLimit
+        from functools_lyl.timeslimit import CallTimesLimit
 
         每4秒执行5次abc
 
