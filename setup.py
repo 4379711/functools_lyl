@@ -6,7 +6,7 @@ with open("README.md", "r", encoding='utf-8') as fh:
 
 setup(
     name='functools_lyl',  # '库的名称,一般写成文件夹的名字就可以了
-    version="0.1.0",  # 版本，每次发版本都不能重复，每次发版必须改这个地方
+    version="0.1.1",  # 版本，每次发版本都不能重复，每次发版必须改这个地方
     description=(
         'Some very useful tools'  # 一个简介，别人搜索包时候，这个概要信息会显示在在搜索列表中
     ),
@@ -16,10 +16,10 @@ setup(
     author_email='4379711@qq.com',
     # maintainer='liuyalong',     # 主要的工作人员
     # maintainer_email='4379711@qq.com',
-    license='BSD License',
+    license='MIT License',
     packages=find_packages(),
     platforms=["all"],
-    url='http://yalong.site',  # 这个是连接，一般写github就可以了，会从pypi跳转到这里去
+    url='https://github.com/4379711/functools_lyl',  # 这个是连接，一般写github就可以了，会从pypi跳转到这里去
     classifiers=[
         'Development Status :: 4 - Beta',
         'Operating System :: OS Independent',

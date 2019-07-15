@@ -1,17 +1,16 @@
+# -*- coding: utf-8 -*-
+# @Time    : 2019/2/15 14:14
+# @Author  : Liu Yalong
+# @File    : mylog.py
+
+
 import logging
 import logging.handlers
 from logging.handlers import TimedRotatingFileHandler
 import gzip
 import os
 import time
-
-
-class Singleton:
-
-    def __new__(cls, *args, **kwargs):
-        if not hasattr(cls, '_instance'):
-            cls._instance = object.__new__(cls)
-        return cls._instance
+from .basetools import Singleton
 
 
 class GzTimedRotatingFileHandler(TimedRotatingFileHandler):
@@ -72,14 +71,16 @@ class My_log(Singleton):
     日志系统，error,info,warning分别记录,每周切割并压缩日志
     """
 
-    def __init__(self, logger_name='lyl', info_name='info.log', error_name='error.log',
+    def __init__(self, dirpath, logger_name='lyl', info_name='info.log', error_name='error.log',
                  warning_name='warning.log', debug_name='debug.log'):
         self.info_name = info_name
         self.logger_name = logger_name
         self.error_name = error_name
         self.warning_name = warning_name
         self.debug_name = debug_name
-        self.path = os.path.dirname(os.path.abspath(__file__)) + '/logs/'
+
+        # self.path = os.path.dirname(os.path.abspath(__file__)) + '/logs/'
+        self.path = dirpath
 
     def get_logger(self):
         logger = logging.getLogger(self.logger_name)
@@ -158,5 +159,5 @@ class My_log(Singleton):
         return logger
 
 
-# 为了方便导入logger，在此处执行
-logger = My_log().get_logger()
+if __name__ == '__main__':
+    logger = My_log().get_logger()
