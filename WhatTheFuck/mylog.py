@@ -84,6 +84,8 @@ class My_log(Singleton):
 
     def get_logger(self):
         logger = logging.getLogger(self.logger_name)
+        if self.path[-1] != '/':
+            self.path += '/'
         if not os.path.exists(self.path):
             os.makedirs(self.path)
         # 添加此行，防止日志重复记录

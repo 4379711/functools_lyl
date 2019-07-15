@@ -6,7 +6,7 @@ with open("README.md", "r", encoding='utf-8') as fh:
 
 setup(
     name='WhatTheFuck',  # '库的名称,一般写成文件夹的名字就可以了
-    version="0.1.1",  # 版本，每次发版本都不能重复，每次发版必须改这个地方
+    version="0.1.2",  # 版本，每次发版本都不能重复，每次发版必须改这个地方
     description=(
         'What The Fuck !'  # 一个简介，别人搜索包时候，这个概要信息会显示在在搜索列表中
     ),
