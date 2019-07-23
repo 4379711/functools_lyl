@@ -6,11 +6,11 @@ with open("README.md", "r", encoding='utf-8') as fh:
 
 setup(
     name='WhatTheFuck',  # '库的名称,一般写成文件夹的名字就可以了
-    version="0.1.2",  # 版本，每次发版本都不能重复，每次发版必须改这个地方
+    version="1.0.0",  # 版本，每次发版本都不能重复，每次发版必须改这个地方
     description=(
         'What The Fuck !'  # 一个简介，别人搜索包时候，这个概要信息会显示在在搜索列表中
     ),
-    long_description=long_description,  # 这是详细的，一般是交别人怎么用，很多包没写，那么在官网就造成没有使用介绍了
+    long_description=long_description,  # 这是详细的，一般是教别人怎么用，很多包没写，那么在pypi官网就没有使用介绍了
     long_description_content_type="text/markdown",
     author='liuyalong',  # 作者
     author_email='4379711@qq.com',
@@ -37,6 +37,12 @@ setup(
     ]
 )
 
-# python setup.py check 检查错误
+# python setup.py check                 检查错误
+# python setup.py sdist bdist_wheel     编译
+# twine upload dist/*                   上传到pypi
+
+# 以下命令已过时
 # python setup.py sdist upload -r pypi  上传到pypi
+
+
 
