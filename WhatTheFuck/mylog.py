@@ -71,15 +71,13 @@ class My_log(Singleton):
     日志系统，error,info,warning分别记录,每周切割并压缩日志
     """
 
-    def __init__(self, dirpath, logger_name='lyl', info_name='info.log', error_name='error.log',
+    def __init__(self, dirpath='./logs/', logger_name='lyl', info_name='info.log', error_name='error.log',
                  warning_name='warning.log', debug_name='debug.log'):
         self.info_name = info_name
         self.logger_name = logger_name
         self.error_name = error_name
         self.warning_name = warning_name
         self.debug_name = debug_name
-
-        # self.path = os.path.dirname(os.path.abspath(__file__)) + '/logs/'
         self.path = dirpath
 
     def get_logger(self):
