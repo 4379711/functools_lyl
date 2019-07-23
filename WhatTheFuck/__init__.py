@@ -23,7 +23,7 @@
 
     2.mylog:日志记录,自动切割，压缩等
     使用方法: from WhatTheFuck.mylog import My_log
-              logger=My_log('dirpath').getlogger()
+              logger=My_log().getlogger()
 
 
     3.timeslimit :控制函数执行频率
