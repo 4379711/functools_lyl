@@ -40,4 +40,14 @@
 
     5.Singleton 单例模式
 
+    6.mytimeout 超时装饰器
+    使用方法：
+        from WhatTheFuck.mytimeout import time_out
+
+        @time_out(4)
+        def test(*args):
+            print("开始执行", args)
+            time.sleep(args[0])
+            print("----执行完成", args)
+
 """
