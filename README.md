@@ -20,33 +20,33 @@
 ------------
 
 
-## schedule_lyl更改自schedule，修复原作者代码日期不准确BUG，并添加线程控制以解决任务延迟的问题
+## schedule更改自schedule，修复原作者代码日期不准确BUG，并添加线程控制以解决任务延迟的问题
 
-		from WhatTheFuck import schedule_lyl
+		from WhatTheFuck import schedule
 		import time
 
 		def abc():
 		print('abc')
 		
 		# 注册任务
-		schedule_lyl.every(2).seconds.do(abc)
-		schedule_lyl.every().day.at("10:00").do(abc)
+		schedule.every(2).seconds.do(abc)
+		schedule.every().day.at("10:00").do(abc)
 
 		# 开启任务
 		while True:
-		schedule_lyl.run_pending()
+		schedule.run_pending()
 		time.sleep(1)
 
-## mylog:日志记录,自动切割，压缩等
+## MyLog:日志记录,自动切割，压缩等
 
-		from WhatTheFuck.mylog import My_log
-		logger=My_log().getlogger()
+		from WhatTheFuck import MyLog
+		logger=MyLog().getlogger()
 		
 
 
 ## timeslimit :控制函数执行频率
 
-		from WhatTheFuck.timeslimit import CallTimesLimit
+		from WhatTheFuck import CallTimesLimit
 
 		#每4秒执行5次abc
 		@CallTimesLimit(5,4)
@@ -55,12 +55,23 @@
 			
 
 ## run_time 此装饰器调控函数运行时间
+        
+        from WhatTheFuck import runtime
+        
+        @run_time
+        def abc():
+            pass
 
 ##  Singleton 单例模式
 
-##  mytimeout 超时装饰器
+    from WhatTheFuck import Singleton
+    
+    class Test(Singleton):
+        pass
 
-		from WhatTheFuck.mytimeout import time_out
+##  time_out 超时装饰器
+
+		from WhatTheFuck import time_out
 
 		@time_out(4)
 		def test(*args):
@@ -68,5 +79,12 @@
 		time.sleep(args[0])
 		print("----执行完成", args)
 		
+##  PyCrypt 加密-解密
+
+        from WhatTheFuck import PyCrypt      
+        
+        pp=PyCrypt('16位密钥字符串..........')
+        aa=pp.encrypt('待加密的内容') 
+        bb =pp.decrypt('加密过的字节内容') 
 
 ------------
