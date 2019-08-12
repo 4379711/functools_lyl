@@ -87,4 +87,17 @@
         aa=pp.encrypt('待加密的内容') 
         bb =pp.decrypt('加密过的字节内容') 
 
+##  MyType 类属性的类型检查
+
+        from WhatTheFuck import MyType  
+        
+        class Test:
+            lll = MyType('str_type1', except_type=str)
+            llll = MyType('str_type2', except_type=str)
+        
+            def __init__(self, value, ):
+                self.lll = value
+                self.llll = value
+                
 ------------
+

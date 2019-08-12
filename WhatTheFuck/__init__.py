@@ -6,8 +6,10 @@ from .mylog import My_log as MyLog
 from .mytimeout import time_out
 from . import schedule_lyl as schedule
 from .timeslimit import CallTimesLimit
-from .basetools import run_time, Singleton
+from .basetools import run_time, Singleton, MyType
 from .md import Prpcrypt as PyCrypt
+
+__all__ = ['MyLog', 'time_out', 'schedule', 'CallTimesLimit', 'Singleton', 'run_time', 'PyCrypt', 'MyType']
 
 """
 说明：
@@ -75,5 +77,15 @@ from .md import Prpcrypt as PyCrypt
         pp=PyCrypt('16位密钥字符串..........')
         aa=pp.encrypt('待加密的内容') 
         bb =pp.decrypt('加密过的字节内容') 
-
+        
+    8.MyType 类属性的类型检查
+    使用方法：
+        
+        class Test:
+            lll = MyType('str_type1', except_type=str)
+            llll = MyType('str_type2', except_type=str)
+        
+            def __init__(self, value, ):
+                self.lll = value
+                self.llll = value
 """
