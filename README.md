@@ -79,7 +79,7 @@
 		time.sleep(args[0])
 		print("----执行完成", args)
 		
-##  PyCrypt 加密-解密
+##  PyCrypt 加密-解密(已删除此项目)
 
         from WhatTheFuck import PyCrypt      
         
@@ -98,6 +98,12 @@
             def __init__(self, value, ):
                 self.lll = value
                 self.llll = value
+                
+                
+##  MWS相关api
+
+       from WhatTheFuck import mws
+       
                 
 ------------
 

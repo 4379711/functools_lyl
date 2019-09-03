@@ -66,7 +66,7 @@ class GzTimedRotatingFileHandler(TimedRotatingFileHandler):
         self.rolloverAt = newRolloverAt
 
 
-class My_log(Singleton):
+class MyLog(Singleton):
     """
     日志系统，error,info,warning分别记录,每周切割并压缩日志
     """
@@ -157,7 +157,3 @@ class My_log(Singleton):
             logger.addHandler(error_handler)
             logger.addHandler(warning_handler)
         return logger
-
-
-if __name__ == '__main__':
-    logger = My_log().get_logger()

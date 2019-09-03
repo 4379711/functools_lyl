@@ -2,14 +2,14 @@
 # @Time    : 2019/7/6 14:21
 # @Author  : Liu Yalong
 # @File    : __init__.py.py
-from .mylog import My_log as MyLog
+from .mylog import MyLog
 from .mytimeout import time_out
-from . import schedule_lyl as schedule
+from . import schedule
 from .timeslimit import CallTimesLimit
 from .basetools import run_time, Singleton, MyType
-from .md import Prpcrypt as PyCrypt
+from . import mws
 
-__all__ = ['MyLog', 'time_out', 'schedule', 'CallTimesLimit', 'Singleton', 'run_time', 'PyCrypt', 'MyType']
+__all__ = ['MyLog', 'time_out', 'schedule', 'CallTimesLimit', 'Singleton', 'run_time', 'MyType', 'mws']
 
 """
 说明：
@@ -69,17 +69,10 @@ __all__ = ['MyLog', 'time_out', 'schedule', 'CallTimesLimit', 'Singleton', 'run_
             print("开始执行", args)
             time.sleep(args[0])
             print("----执行完成", args)
-    
-    7.PyCrypt 加密解密
+         
+    7.MyType 类属性的类型检查
     使用方法：
-        from WhatTheFuck import PyCrypt      
-        
-        pp=PyCrypt('16位密钥字符串..........')
-        aa=pp.encrypt('待加密的内容') 
-        bb =pp.decrypt('加密过的字节内容') 
-        
-    8.MyType 类属性的类型检查
-    使用方法：
+        from WhatTheFuck import MyType
         
         class Test:
             lll = MyType('str_type1', except_type=str)
@@ -88,4 +81,8 @@ __all__ = ['MyLog', 'time_out', 'schedule', 'CallTimesLimit', 'Singleton', 'run_
             def __init__(self, value, ):
                 self.lll = value
                 self.llll = value
+                
+    8.MWS相关api
+    使用方法：
+        from WhatTheFuck import mws
 """
