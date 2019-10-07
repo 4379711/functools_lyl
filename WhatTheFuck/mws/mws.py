@@ -27,6 +27,7 @@ __all__ = [
     'Feeds',
     'Inventory',
     'InboundShipments',
+    'OutboundShipments',
     'MWSError',
     'Reports',
     'Orders',
@@ -1223,7 +1224,7 @@ class InboundShipments(MWS):
 
     @utils.next_token_action('ListInboundShipments')
     def list_inbound_shipments(self, shipment_ids=None, shipment_statuses=None,
-                               last_updated_after=None, last_updated_before=None, ):
+                               last_updated_after=None, last_updated_before=None, next_token=None):
         """
         Returns list of shipments based on statuses, IDs, and/or
         before/after datetimes.
@@ -1244,7 +1245,7 @@ class InboundShipments(MWS):
 
     @utils.next_token_action('ListInboundShipmentItems')
     def list_inbound_shipment_items(self, shipment_id=None, last_updated_after=None,
-                                    last_updated_before=None, ):
+                                    last_updated_before=None, next_token=None):
         """
         Returns list of items within inbound shipments and/or
         before/after datetimes.
@@ -1310,7 +1311,28 @@ class OutboundShipments(MWS):
     NEXT_TOKEN_OPERATIONS = [
         'ListAllFulfillmentOrders',
     ]
-    # TODO: Complete this class section
+
+    @utils.next_token_action('ListAllFulfillmentOrders')
+    def list_all_fulfillment_orders(self, start_date=None, next_token=None):
+        """
+        returns a list of fulfillment orders that were updated after (or at) a specified date.
+        This operation returns general fulfillment order information but does not return item-level
+        or shipment-level information.
+        """
+        data = dict(Action='ListAllFulfillmentOrders',
+                    QueryStartDateTime=start_date)
+        return self.make_request(data, "POST")
+
+    def get_fulfillment_order(self, order_id):
+        """
+        The GetFulfillmentOrder operation returns a fulfillment order based on a SellerFulfillmentOrderId that you
+        specify. This operation returns general fulfillment order information as well as item-level and
+        shipment-level information.
+        """
+        data = dict(Action='GetFulfillmentOrder',
+                    SellerFulfillmentOrderId=order_id
+                    )
+        return self.make_request(data, "POST")
 
 
 class Recommendations(MWS):
