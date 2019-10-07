@@ -1,11 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Jun 26 15:42:07 2012
-
-Borrowed from https://github.com/timotheus/ebaysdk-python
-
-@author: pierre
-"""
 from __future__ import absolute_import
 from functools import wraps
 import re
@@ -26,6 +19,7 @@ class ObjectDict(dict):
     >>> a.water
     'water'
     """
+
     def __init__(self, initd=None):
         if initd is None:
             initd = {}
@@ -134,7 +128,7 @@ def enumerate_param(param, values):
         param += '.'
     # Return final output: dict comprehension of the enumerated param and values.
     return {
-        '{}{}'.format(param, idx+1): val
+        '{}{}'.format(param, idx + 1): val
         for idx, val in enumerate(values)
     }
 
@@ -197,7 +191,7 @@ def enumerate_keyed_param(param, values):
     for idx, val_dict in enumerate(values):
         # Build the final output.
         params.update({
-            '{param}{idx}.{key}'.format(param=param, idx=idx+1, key=k): v
+            '{param}{idx}.{key}'.format(param=param, idx=idx + 1, key=k): v
             for k, v in val_dict.items()
         })
     return params
@@ -218,14 +212,13 @@ def unique_list_order_preserved(seq):
 def dt_iso_or_none(dt_obj):
     """
     If dt_obj is a datetime, return isoformat()
-    TODO: if dt_obj is a string in iso8601 already, return it back
     Otherwise, return None
     """
     # If d is a datetime object, format it to iso and return
     if isinstance(dt_obj, datetime.datetime):
         return dt_obj.isoformat()
-
-    # TODO: if dt_obj is a string in iso8601 already, return it
+    if isinstance(dt_obj, str) and (dt_obj in 'iso8601'):
+        return dt_obj
 
     # none of the above: return None
     return None
@@ -240,6 +233,7 @@ def next_token_action(action_name):
     Only the `next_token` kwarg is consumed by the "next" call:
     all other args and kwargs are ignored and not required.
     """
+
     def _decorator(request_func):
         @wraps(request_func)
         def _wrapped_func(self, *args, **kwargs):
@@ -248,13 +242,7 @@ def next_token_action(action_name):
                 # Token captured: run the "next" action.
                 return self.action_by_next_token(action_name, next_token)
             return request_func(self, *args, **kwargs)
+
         return _wrapped_func
+
     return _decorator
-
-
-# DEPRECATION: these are old names for these objects, which have been updated
-# to more idiomatic naming convention. Leaving these names in place in case
-# anyone is using the old object names.
-# TODO: remove in 1.0.0
-object_dict = ObjectDict
-xml2dict = XML2Dict

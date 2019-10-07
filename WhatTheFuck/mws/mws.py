@@ -35,10 +35,9 @@ __all__ = [
     'Recommendations',
     'Sellers',
     'Finances',
+    'OffAmazonPayments'
 ]
 
-# See https://images-na.ssl-images-amazon.com/images/G/01/mwsportal/doc/en_US/bde/MWSDeveloperGuide._V357736853_.pdf
-# page 8
 # for a list of the end points and marketplace IDs
 
 MARKETPLACES = {
@@ -237,7 +236,6 @@ class MWS(object):
             # if i pass the params dict as params to request, request will repeat that step because it will need
             # to convert the dict to a url parsed string, so why do it twice if i can just pass the full url :).
 
-            # 2019/08/05 add timeout --liuyalong
             response = request(method, url, data=kwargs.get('body', ''), headers=headers, timeout=100)
             response.raise_for_status()
             # When retrieving data from the response object,
@@ -248,7 +246,7 @@ class MWS(object):
 
             # I do not check the headers to decide which content structure to server simply because sometimes
             # Amazon's MWS API returns XML error responses with "text/plain" as the Content-Type.
-            rootkey = kwargs.get('rootkey', extra_data.get("Action") + "Result")
+            rootkey = kwargs.get('rootkey', extra_data.get("Action", "") + "Result")
             try:
                 try:
                     parsed_response = DictWrapper(data, rootkey)
@@ -375,19 +373,6 @@ class Feeds(MWS):
         data.update(utils.enumerate_param('FeedProcessingStatusList.Status.', processingstatuses))
         return self.make_request(data)
 
-    def get_submission_list_by_next_token(self, token):
-        """
-        Deprecated.
-        Use `get_feed_submission_list(next_token=token)` instead.
-        """
-        # data = dict(Action='GetFeedSubmissionListByNextToken', NextToken=token)
-        # return self.make_request(data)
-        warnings.warn(
-            "Use `get_feed_submission_list(next_token=token)` instead.",
-            DeprecationWarning,
-        )
-        return self.get_feed_submission_list(next_token=token)
-
     def get_feed_submission_count(self, feedtypes=None, processingstatuses=None, fromdate=None, todate=None):
         data = dict(Action='GetFeedSubmissionCount',
                     SubmittedFromDate=fromdate,
@@ -446,19 +431,6 @@ class Reports(MWS):
         data.update(utils.enumerate_param('ReportTypeList.Type.', types))
         return self.make_request(data)
 
-    def get_report_list_by_next_token(self, token):
-        """
-        Deprecated.
-        Use `get_report_list(next_token=token)` instead.
-        """
-        # data = dict(Action='GetReportListByNextToken', NextToken=token)
-        # return self.make_request(data)
-        warnings.warn(
-            "Use `get_report_list(next_token=token)` instead.",
-            DeprecationWarning,
-        )
-        return self.get_report_list(next_token=token)
-
     def get_report_request_count(self, report_types=(), processingstatuses=(),
                                  fromdate=None, todate=None):
         data = dict(Action='GetReportRequestCount',
@@ -479,19 +451,6 @@ class Reports(MWS):
         data.update(utils.enumerate_param('ReportTypeList.Type.', types))
         data.update(utils.enumerate_param('ReportProcessingStatusList.Status.', processingstatuses))
         return self.make_request(data)
-
-    def get_report_request_list_by_next_token(self, token):
-        """
-        Deprecated.
-        Use `get_report_request_list(next_token=token)` instead.
-        """
-        # data = dict(Action='GetReportRequestListByNextToken', NextToken=token)
-        # return self.make_request(data)
-        warnings.warn(
-            "Use `get_report_request_list(next_token=token)` instead.",
-            DeprecationWarning,
-        )
-        return self.get_report_request_list(next_token=token)
 
     def request_report(self, report_type, start_date=None, end_date=None, marketplaceids=()):
         data = dict(Action='RequestReport',
@@ -546,19 +505,6 @@ class Orders(MWS):
         data.update(utils.enumerate_param('PaymentMethod.Method.', payment_methods))
         return self.make_request(data)
 
-    def list_orders_by_next_token(self, token):
-        """
-        Deprecated.
-        Use `list_orders(next_token=token)` instead.
-        """
-        # data = dict(Action='ListOrdersByNextToken', NextToken=token)
-        # return self.make_request(data)
-        warnings.warn(
-            "Use `list_orders(next_token=token)` instead.",
-            DeprecationWarning,
-        )
-        return self.list_orders(next_token=token)
-
     def get_order(self, amazon_order_ids):
         data = dict(Action='GetOrder')
         data.update(utils.enumerate_param('AmazonOrderId.Id.', amazon_order_ids))
@@ -568,19 +514,6 @@ class Orders(MWS):
     def list_order_items(self, amazon_order_id=None, next_token=None):
         data = dict(Action='ListOrderItems', AmazonOrderId=amazon_order_id)
         return self.make_request(data)
-
-    def list_order_items_by_next_token(self, token):
-        """
-        Deprecated.
-        Use `list_order_items(next_token=token)` instead.
-        """
-        # data = dict(Action='ListOrderItemsByNextToken', NextToken=token)
-        # return self.make_request(data)
-        warnings.warn(
-            "Use `list_order_items(next_token=token)` instead.",
-            DeprecationWarning,
-        )
-        return self.list_order_items(next_token=token)
 
 
 class Products(MWS):
@@ -730,19 +663,6 @@ class Sellers(MWS):
         data = dict(Action='ListMarketplaceParticipations')
         return self.make_request(data)
 
-    def list_marketplace_participations_by_next_token(self, token):
-        """
-        Deprecated.
-        Use `list_marketplace_participations(next_token=token)` instead.
-        """
-        # data = dict(Action='ListMarketplaceParticipations', NextToken=token)
-        # return self.make_request(data)
-        warnings.warn(
-            "Use `list_marketplace_participations(next_token=token)` instead.",
-            DeprecationWarning,
-        )
-        return self.list_marketplace_participations(next_token=token)
-
 
 class Finances(MWS):
     """
@@ -768,17 +688,6 @@ class Finances(MWS):
                     )
         return self.make_request(data)
 
-    def list_financial_event_groups_by_next_token(self, token):
-        """
-        Deprecated.
-        Use `list_financial_event_groups(next_token=token)` instead.
-        """
-        warnings.warn(
-            "Use `list_financial_event_groups(next_token=token)` instead.",
-            DeprecationWarning,
-        )
-        return self.list_financial_event_groups(next_token=token)
-
     @utils.next_token_action('ListFinancialEvents')
     def list_financial_events(self, financial_event_group_id=None, amazon_order_id=None, posted_after=None,
                               posted_before=None, max_results=None, next_token=None):
@@ -793,17 +702,6 @@ class Finances(MWS):
                     MaxResultsPerPage=max_results,
                     )
         return self.make_request(data)
-
-    def list_financial_events_by_next_token(self, token):
-        """
-        Deprecated.
-        Use `list_financial_events(next_token=token)` instead.
-        """
-        warnings.warn(
-            "Use `list_financial_events(next_token=token)` instead.",
-            DeprecationWarning,
-        )
-        return self.list_financial_events(next_token=token)
 
 
 # * Fulfillment APIs * #
@@ -1288,19 +1186,6 @@ class Inventory(MWS):
         data.update(utils.enumerate_param('SellerSkus.member.', skus))
         return self.make_request(data, "POST")
 
-    def list_inventory_supply_by_next_token(self, token):
-        """
-        Deprecated.
-        Use `list_inventory_supply(next_token=token)` instead.
-        """
-        # data = dict(Action='ListInventorySupplyByNextToken', NextToken=token)
-        # return self.make_request(data, "POST")
-        warnings.warn(
-            "Use `list_inventory_supply(next_token=token)` instead.",
-            DeprecationWarning,
-        )
-        return self.list_inventory_supply(next_token=token)
-
 
 class OutboundShipments(MWS):
     """
@@ -1366,16 +1251,174 @@ class Recommendations(MWS):
                     RecommendationCategory=recommendationcategory)
         return self.make_request(data, "POST")
 
-    def list_recommendations_by_next_token(self, token):
-        """
-        Deprecated.
-        Use `list_recommendations(next_token=token)` instead.
-        """
-        # data = dict(Action="ListRecommendationsByNextToken",
-        #             NextToken=token)
-        # return self.make_request(data, "POST")
-        warnings.warn(
-            "Use `list_recommendations(next_token=token)` instead.",
-            DeprecationWarning,
+
+class OffAmazonPayments(MWS):
+    SANDBOX_URI = "/OffAmazonPayments_Sandbox/2013-01-01/"
+    URI = "/OffAmazonPayments/2013-01-01/"
+    VERSION = "2013-01-01"
+
+    def authorize(self, order_ref, order_total, auth_id, timeout=60):
+        return self.make_request(
+            extra_data=dict(
+                Action="Authorize",
+                AmazonOrderReferenceId=order_ref,
+                AuthorizationReferenceId=str(auth_id),
+                TransactionTimeout=str(timeout),
+                **{
+                    "AuthorizationAmount.Amount": "{:.2f}".format(order_total),
+                    "AuthorizationAmount.CurrencyCode": "USD"
+                }
+            )
         )
-        return self.list_recommendations(next_token=token)
+
+    def get_authorization_status(self, auth_id):
+        return self.make_request(
+            extra_data=dict(
+                Action="GetAuthorizationDetails",
+                AmazonAuthorizationId=auth_id
+            )
+        )
+
+    def capture(self, auth_id, amount, capture_id, notes="", currency="USD"):
+        """
+        Captures funds
+        :param auth_id: the authorization id you want to capture
+        :param amount: the amount you wish to capture
+        :param capture_id: An id that you make up
+        :param notes:
+        :param currency:
+        :return: direct response from amazon
+        """
+        return self.make_request(
+            extra_data=dict(
+                Action="Capture",
+                AmazonAuthorizationId=auth_id,
+                CaptureReferenceId=capture_id,
+                SellerCaptureNote=notes,
+                **{
+                    "CaptureAmount.Amount": "{:.2f}".format(amount),
+                    "CaptureAmount.CurrencyCode": currency,
+                }
+            )
+        )
+
+    def get_capture_details(self, capture_id):
+        return self.make_request(
+            extra_data=dict(
+                Action="GetCaptureDetails",
+                AmazonCaptureId=capture_id
+            )
+        )
+
+    def close_authorization(self, auth_id):
+        """
+        Call to close an authorization after the total amount of
+        the authorization has been captured.
+        """
+        return self.make_request(
+            extra_data=dict(
+                Action="CloseAuthorization",
+                AmazonAuthorizationId=auth_id
+            )
+        )
+
+    def refund(self, capture_id, amount, refund_id, notes="", currency="USD"):
+        """
+        Refunds a captured payment
+        :param capture_id: the id of the captured payment
+        :param amount: the amount to refund
+        :param refund_id: a made up refund id for your reference
+        :param notes:
+        :param currency:
+        :return: the direct return value from amazon
+        """
+        return self.make_request(
+            extra_data=dict(
+                Action="Refund",
+                AmazonCaptureId=capture_id,
+                RefundReferenceId=refund_id,
+                SellerRefundNote=notes,
+                **{
+                    "RefundAmount.Amount": "{:.2f}".format(amount),
+                    "RefundAmount.CurrencyCode": currency
+                }
+            )
+        )
+
+    def get_refund_details(self, refund_id):
+        """
+        Call to query the status of a particular refund.
+        If you received a Pending status when you called the Refund operation,
+        you can call this operation to get the current status.
+        """
+        return self.make_request(
+            extra_data=dict(
+                Action="GetRefundDetails",
+                AmazonRefundId=refund_id
+            )
+        )
+
+    def get_billing_agreement_details(self, order_ref,
+                                      address_consent_token):
+        return self.make_request(
+            extra_data=dict(
+                Action="GetBillingAgreementDetails",
+                AmazonBillingAgreementId=order_ref,
+                AddressConsentToken=address_consent_token
+            )
+        )
+
+    def get_order_reference_details(self, order_ref,
+                                    address_consent_token=""):
+        kwargs = {}
+        if address_consent_token:
+            kwargs['AddressConsentToken'] = address_consent_token
+
+        return self.make_request(
+            extra_data=dict(
+                Action="GetOrderReferenceDetails",
+                AmazonOrderReferenceId=order_ref,
+                **kwargs
+            )
+        )
+
+    def set_order_reference_details(self, order_ref, order_total,
+                                    store_name, order_id=None, note=None, currency="USD"):
+        params = {
+            "OrderReferenceAttributes.OrderTotal.Amount": str(order_total),
+            "OrderReferenceAttributes.OrderTotal.CurrencyCode": currency,
+            "OrderReferenceAttributes.SellerOrderAttributes.SellerOrderId": str(
+                order_id),
+            "OrderReferenceAttributes.SellerOrderAttributes.StoreName": store_name,
+            "OrderReferenceAttributes.SellerNote": note,
+        }
+
+        return self.make_request(
+            extra_data=dict(
+                Action="SetOrderReferenceDetails",
+                AmazonOrderReferenceId=order_ref,
+                **params
+            )
+        )
+
+    def confirm_order_reference(self, order_ref):
+        return self.make_request(
+            extra_data=dict(
+                Action="ConfirmOrderReference",
+                AmazonOrderReferenceId=order_ref,
+            )
+        )
+
+    def cancel_order_reference(self, order_ref):
+        return self.make_request(
+            extra_data=dict(
+                Action="CancelOrderReference",
+                AmazonOrderReferenceId=order_ref
+            )
+        )
+
+    def close_order_reference(self, order_ref):
+        return self.make_request(
+            extra_data=dict(
+                Action="CloseOrderReference",
+                AmazonOrderReferenceId=order_ref))
