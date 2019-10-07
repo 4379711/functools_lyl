@@ -69,16 +69,19 @@ class GzTimedRotatingFileHandler(TimedRotatingFileHandler):
 class MyLog(Singleton):
     """
     日志系统，error,info,warning分别记录,每周切割并压缩日志
+    debug 是否开启debug模式
     """
 
-    def __init__(self, dirpath='./logs/', logger_name='lyl', info_name='info.log', error_name='error.log',
-                 warning_name='warning.log', debug_name='debug.log'):
+    def __init__(self, dir_path=None, logger_name='lyl', info_name='info.log', error_name='error.log',
+                 warning_name='warning.log', debug_name='debug.log', debug=False):
         self.info_name = info_name
         self.logger_name = logger_name
         self.error_name = error_name
         self.warning_name = warning_name
         self.debug_name = debug_name
-        self.path = dirpath
+        self.debug = debug
+        if not dir_path:
+            self.path = './logs/'
 
     def get_logger(self):
         logger = logging.getLogger(self.logger_name)
@@ -86,24 +89,27 @@ class MyLog(Singleton):
             self.path += '/'
         if not os.path.exists(self.path):
             os.makedirs(self.path)
+
         # 添加此行，防止日志重复记录
         if not logger.handlers:
-            # 默认日志等级
-            logger.setLevel(logging.INFO)
+            # 设置日志等级,默认是INFO
+            if self.debug:
+                logger.setLevel(logging.DEBUG)
+            else:
+                logger.setLevel(logging.INFO)
 
             # 格式化输出
-            # formatter = logging.Formatter("%(asctime)s - %(filename)s - %(funcName)s - %(message)s", "%Y%m%d %H:%M:%S")
+            # formatter = logging.Formatter("%(asctime)s - %(filename)s - %(funcName)s - %(message)s",
+            # "%Y%m%d %H:%M:%S")
             formatter = logging.Formatter("%(asctime)s  - %(message)s", "%Y%m%d %H:%M:%S")
-            formatter01 = logging.Formatter("%(asctime)s - %(message)s", "%Y%m%d %H:%M:%S")
 
             # 创建两个handler
             # info_handler = logging.handlers.TimedRotatingFileHandler(self.info_name, when='midnight', interval=7,
             #                                                          backupCount=7, encoding='utf-8')
             # error_handler = logging.handlers.TimedRotatingFileHandler(self.error_name, when='midnight', interval=7,
             #                                                           backupCount=7, encoding='utf-8')
-            # warning_handler = logging.handlers.TimedRotatingFileHandler(self.warning_name, when='midnight', interval=7,
-            #                                                             backupCount=7, encoding='utf-8')
-            # #
+            # warning_handler = logging.handlers.TimedRotatingFileHandler(self.warning_name, when='midnight',
+            # interval=7,backupCount=7, encoding='utf-8')
 
             info_handler = GzTimedRotatingFileHandler(self.path + self.info_name, when='D', interval=10,
                                                       backupCount=7, encoding='utf-8')
@@ -115,7 +121,7 @@ class MyLog(Singleton):
                 debug_handler = GzTimedRotatingFileHandler(self.path + self.debug_name, when='D', interval=10,
                                                            backupCount=7, encoding='utf-8')
                 debug_handler.suffix = "%Y%m%d.log"
-                debug_handler.setFormatter(formatter01)
+                debug_handler.setFormatter(formatter)
                 debug_handler.setLevel(logging.DEBUG)
                 debug_filter = logging.Filter()
                 debug_filter.filter = lambda record: record.levelno == logging.DEBUG
@@ -140,7 +146,7 @@ class MyLog(Singleton):
             # 格式化输出应用给handlers
             info_handler.setFormatter(formatter)
             error_handler.setFormatter(formatter)
-            warning_handler.setFormatter(formatter01)
+            warning_handler.setFormatter(formatter)
 
             # 添加过滤器，过滤掉info中等级小于warning的
             info_filter = logging.Filter()

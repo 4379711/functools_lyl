@@ -4,3 +4,6 @@ dist/*
 *.bak
 build/*
 test*
+logs/*
+*.log
+*.txt
