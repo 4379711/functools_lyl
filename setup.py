@@ -6,7 +6,7 @@ with open("README.md", "r", encoding='utf-8') as fh:
 
 setup(
     name='WhatTheFuck',  # '库的名称,一般写成文件夹的名字就可以了
-    version="1.3.0",  # 版本，每次发版本都不能重复，每次发版必须改这个地方
+    version="1.3.2",  # 版本，每次发版本都不能重复，每次发版必须改这个地方
     description=(
         "I don't know what to say ! Just use it !"  # 一个简介，别人搜索包时候，这个概要信息会显示在在搜索列表中
     ),
@@ -30,6 +30,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Topic :: Software Development :: Libraries'
     ],
     install_requires=[  # 这里是依赖列表，表示运行这个包的运行某些功能还需要你安装其他的包

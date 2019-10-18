@@ -6,17 +6,16 @@ from collections import deque
 from threading import Lock
 import time
 import math
-from .basetools import Singleton
 
 
-class CallTimesLimit(Singleton):
+class CallTimesLimit:
     """
     每seconds秒执行m次
     """
 
     def __init__(self, m, seconds):
-        if int(m) < 1 or int(seconds) < 1:
-            raise ValueError('你傻逼啊！')
+        if not isinstance(m, int) or not isinstance(seconds, int):
+            raise ValueError('Parameter must be <TYPE:int> and bigger than int(1) !')
         self.__len = m
         self.__seconds = seconds
         self.__dq = deque(maxlen=int(m) * 3)

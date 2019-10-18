@@ -6,10 +6,13 @@ from .mylog import MyLog
 from .mytimeout import time_out
 from . import schedule
 from .timeslimit import CallTimesLimit
-from .basetools import run_time, Singleton, MyType
+from .basetools import *
 from . import mws
 
-__all__ = ['MyLog', 'time_out', 'schedule', 'CallTimesLimit', 'Singleton', 'run_time', 'MyType', 'mws']
+__all__ = ['MyLog', 'time_out', 'schedule', 'CallTimesLimit',
+           'Singleton', 'run_time', 'MyType', 'mws',
+           'MyDict'
+           ]
 
 """
 说明：
@@ -85,4 +88,18 @@ __all__ = ['MyLog', 'time_out', 'schedule', 'CallTimesLimit', 'Singleton', 'run_
     8.MWS相关api
     使用方法：
         from WhatTheFuck import mws
+        
+    9.MyDict
+    a=MyDict()
+    a.append_('key','value')
+    a.o=5
+    a.c='fasf'
+    a.add_('key0','value0')
+    print(dict(a))
+    >>>{
+        'key': ['value'],
+        'o': 5, 
+        'c': 'fasf', 
+        'key0': {'value0'}
+        }
 """
