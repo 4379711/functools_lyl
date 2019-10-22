@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2019/2/15 14:14
+# @Time    : 2019/10/22 13:33
 # @Author  : Liu Yalong
-# @File    : mylog.py
+# @File    : __init__.py
 
 
 import logging
@@ -10,7 +10,10 @@ from logging.handlers import TimedRotatingFileHandler
 import gzip
 import os
 import time
-from .basetools import Singleton
+
+from ..functions import Singleton
+
+__all__ = ['MyLog']
 
 
 class GzTimedRotatingFileHandler(TimedRotatingFileHandler):

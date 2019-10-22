@@ -11,7 +11,7 @@
 
 ------------
 
-> pip install WhatTheFuck
+> pip install geeker
 
 ------------
 
@@ -22,11 +22,11 @@
 
 ## schedule更改自schedule，修复原作者代码日期不准确BUG，并添加线程控制以解决任务延迟的问题
 
-		from WhatTheFuck import schedule
+		from geeker import schedule
 		import time
 
 		def abc():
-		print('abc')
+		    print('abc')
 		
 		# 注册任务
 		schedule.every(2).seconds.do(abc)
@@ -34,19 +34,19 @@
 
 		# 开启任务
 		while True:
-		schedule.run_pending()
-		time.sleep(1)
+		    schedule.run_pending()
+		    time.sleep(1)
 
 ## MyLog:日志记录,自动切割，压缩等
 
-		from WhatTheFuck import MyLog
+		from geeker import MyLog
 		logger=MyLog().getlogger()
 		
 
 
 ## timeslimit :控制函数执行频率
 
-		from WhatTheFuck import CallTimesLimit
+		from geeker import CallTimesLimit
 
 		#每4秒执行5次abc
 		@CallTimesLimit(5,4)
@@ -56,7 +56,7 @@
 
 ## run_time 此装饰器调控函数运行时间
         
-        from WhatTheFuck import runtime
+        from geeker import runtime
         
         @run_time
         def abc():
@@ -64,24 +64,24 @@
 
 ##  Singleton 单例模式
 
-    from WhatTheFuck import Singleton
+    from geeker import Singleton
     
     class Test(Singleton):
         pass
 
 ##  time_out 超时装饰器
 
-		from WhatTheFuck import time_out
+		from geeker import time_out
 
 		@time_out(4)
 		def test(*args):
-		print("开始执行", args)
-		time.sleep(args[0])
-		print("----执行完成", args)
+		    print("开始执行", args)
+		    time.sleep(args[0])
+		    print("----执行完成", args)
 		
 ##  PyCrypt 加密-解密(已删除此项目)
 
-        from WhatTheFuck import PyCrypt      
+        from geeker import PyCrypt      
         
         pp=PyCrypt('16位密钥字符串..........')
         aa=pp.encrypt('待加密的内容') 
@@ -89,7 +89,7 @@
 
 ##  MyType 类属性的类型检查
 
-        from WhatTheFuck import MyType  
+        from geeker import MyType  
         
         class Test:
             lll = MyType('str_type1', except_type=str)
@@ -102,8 +102,25 @@
                 
 ##  MWS相关api
 
-       from WhatTheFuck import mws
-       
+       from geeker import mws
+
+
+##  特殊字典
+
+        from geeker import MyDict
+        a=MyDict()
+        a.append_('key','value')
+        a.o=5
+        a.c='fasf'
+        a.add_('key0','value0')
+        print(dict(a))
+        
+        >>>{
+            'key': ['value'],
+            'o': 5, 
+            'c': 'fasf', 
+            'key0': {'value0'}
+            }
                 
 ------------
 

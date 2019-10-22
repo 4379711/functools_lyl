@@ -1,7 +1,13 @@
+# -*- coding: utf-8 -*-
+# @Time    : 2019/02/22 13:39
+# @Author  : Liu Yalong
+# @File    : __init__.py
+
 import ctypes
 import inspect
 import time
 import threading
+from functools import wraps
 
 
 class MyThread(threading.Thread):
@@ -39,20 +45,22 @@ class MyThread(threading.Thread):
 
 def time_out(limit_time):
     if not isinstance(limit_time, int):
-        raise ValueError('The argument must be int !')
+        raise ValueError('The type of argument must be int !')
 
     def warps0(func):
         def warps1(*args, **kwargs):
             th = MyThread(target=func, args=args, kwargs=kwargs)
             th.setDaemon(True)
             th.start()
+
             # try to get result
             for _ in range(limit_time):
                 time.sleep(1)
                 is_result = th.get_result
                 if is_result != '<__what fuck!__>':
                     return is_result
-            # 核心代码 <让线程自杀!>
+
+            # kill the thread by itself
             th.stop_thread(th)
             raise TimeoutError('Oh,Fuck!TimeOut Error!')
 
@@ -61,21 +69,16 @@ def time_out(limit_time):
     return warps0
 
 
-if __name__ == '__main__':
-    @time_out(4)
-    def test(*args):
-        print("开始执行", args)
-        time.sleep(args[0])
-        print("----执行完成", args)
+def run_time(func):
+    # 此装饰器，用来调试函数运行时间及执行流程
+    @wraps(func)  # 保留源信息
+    def mywarps(*args, **kwargs):
+        start_time = time.time()
+        print(f'''【进入 {func.__name__}】 参数：【{args}】 【{kwargs}】''')
+        aa = func(*args, **kwargs)
+        cost_time = time.time() - start_time
+        print(f'''【{func.__name__}】 耗时:【{cost_time}秒】''')
+        print(f'''【离开 {func.__name__}】''')
+        return aa
 
-
-    mlist = []
-    for i in range(7):
-        th = threading.Thread(target=test, args=(i,))
-        mlist.append(th)
-
-    for i in mlist:
-        i.start()
-
-    for i in mlist:
-        i.join()
+    return mywarps

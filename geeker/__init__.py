@@ -2,23 +2,24 @@
 # @Time    : 2019/7/6 14:21
 # @Author  : Liu Yalong
 # @File    : __init__.py.py
-from .mylog import MyLog
-from .mytimeout import time_out
-from . import schedule
-from .timeslimit import CallTimesLimit
-from .basetools import *
-from . import mws
+from __future__ import absolute_import
 
-__all__ = ['MyLog', 'time_out', 'schedule', 'CallTimesLimit',
-           'Singleton', 'run_time', 'MyType', 'mws',
-           'MyDict'
+from .mylog import MyLog
+from . import schedule
+from . import mws
+from .functions import *
+from .utils import *
+
+__all__ = ['MyType', 'MyLog', 'time_out',
+           'schedule', 'mws', 'CallTimesLimit',
+           'Singleton', 'MyDict', 'run_time'
            ]
 
 """
 说明：
     1.schedule更改自schedule，修复原作者代码日期不准确BUG，并添加线程控制以解决任务延迟的问题
     使用方法：
-        from WhatTheFuck import schedule
+        from geeker import schedule
         import time
 
         def abc():
@@ -34,13 +35,13 @@ __all__ = ['MyLog', 'time_out', 'schedule', 'CallTimesLimit',
             time.sleep(1)
 
     2.mylog:日志记录,自动切割，压缩等
-    使用方法: from WhatTheFuck import MyLog
+    使用方法: from geeker import MyLog
               logger=MyLog().getlogger()
 
 
     3.timeslimit :控制函数执行频率
     使用方法：
-        from WhatTheFuck import CallTimesLimit
+        from geeker import CallTimesLimit
 
         每4秒执行5次abc
 
@@ -50,7 +51,7 @@ __all__ = ['MyLog', 'time_out', 'schedule', 'CallTimesLimit',
 
     4.run_time 此装饰器调控函数运行时间
     使用方法：
-        from WhatTheFuck import runtime
+        from geeker import runtime
             
             @run_time
             def abc():
@@ -58,14 +59,14 @@ __all__ = ['MyLog', 'time_out', 'schedule', 'CallTimesLimit',
 
     5.Singleton 单例模式
     使用方法：
-        from WhatTheFuck import Singleton
+        from geeker import Singleton
         
         class Test(Singleton):
             pass
 
     6.mytimeout 超时装饰器
     使用方法：
-        from WhatTheFuck import time_out
+        from geeker import time_out
 
         @time_out(4)
         def test(*args):
@@ -75,7 +76,7 @@ __all__ = ['MyLog', 'time_out', 'schedule', 'CallTimesLimit',
          
     7.MyType 类属性的类型检查
     使用方法：
-        from WhatTheFuck import MyType
+        from geeker import MyType
         
         class Test:
             lll = MyType('str_type1', except_type=str)
@@ -87,7 +88,7 @@ __all__ = ['MyLog', 'time_out', 'schedule', 'CallTimesLimit',
                 
     8.MWS相关api
     使用方法：
-        from WhatTheFuck import mws
+        from geeker import mws
         
     9.MyDict
     a=MyDict()

@@ -40,9 +40,6 @@ class ObjectDict(dict):
         self.__setitem__(item, value)
 
     def getvalue(self, item, value=None):
-        """
-        Old Python 2-compatible getter method for default value.
-        """
         return self.get(item, {}).get('value', value)
 
 
