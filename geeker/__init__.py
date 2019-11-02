@@ -11,7 +11,7 @@ from .functions import *
 from .utils import *
 
 __all__ = ['MyType', 'MyLog', 'time_out',
-           'schedule', 'mws', 'CallTimesLimit',
+           'schedule', 'mws', 'Concurrency',
            'Singleton', 'MyDict', 'run_time'
            ]
 
@@ -41,14 +41,31 @@ __all__ = ['MyType', 'MyLog', 'time_out',
 
     3.timeslimit :控制函数执行频率
     使用方法：
-        from geeker import CallTimesLimit
+        from geeker import Concurrency
 
         每4秒执行5次abc
 
-        @CallTimesLimit(5,4)
+        @Concurrency(5,4)
         def abc():
             pass
-
+        
+        并发量为5
+        @Concurrency(5)
+        def abc():
+            pass
+            
+        同样可以装饰类方法
+        
+        class Test:
+            def __init__(self):
+                pass
+    
+            @Concurrency(3)
+            def test(self, a):
+                print(a, self)
+                time.sleep(a)
+                
+        
     4.run_time 此装饰器调控函数运行时间
     使用方法：
         from geeker import runtime
@@ -92,10 +109,10 @@ __all__ = ['MyType', 'MyLog', 'time_out',
         
     9.MyDict
     a=MyDict()
-    a.append_('key','value')
+    a.append_key('key','value')
     a.o=5
     a.c='fasf'
-    a.add_('key0','value0')
+    a.add_key('key0','value0')
     print(dict(a))
     >>>{
         'key': ['value'],

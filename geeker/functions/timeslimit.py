@@ -3,50 +3,85 @@
 # @Author  : Liu Yalong
 # @File    : timeslimit.py
 from collections import deque
-from threading import Lock
 import time
 import math
+from queue import Queue
+from threading import Lock
 
 
-class CallTimesLimit:
+class BaseNeedTime:
     """
-    每seconds秒执行m次
+    使用deque控制执行频率
     """
+    __slots__ = ()
+    _func = None
+    _seconds = None
+    _maxlen = None
+    _dq = None
+    lock = Lock()
 
-    def __init__(self, m, seconds):
-        if not isinstance(m, int) or not isinstance(seconds, int):
-            raise ValueError('Parameter must be <TYPE:int> and bigger than int(1) !')
-        self.__len = m
-        self.__seconds = seconds
-        self.__dq = deque(maxlen=int(m) * 3)
-        self.lock = Lock()
+    def append_time(self, *args, **kwargs):
+        # 这里需要加锁,否则并发情况下无法控制
+        with self.lock:
+            if len(self._dq) < self._maxlen:
+                self._dq.append(time.time())
+            else:
+                need_time = self._seconds - (time.time() - self._dq[0])
+                need_time = math.ceil(need_time)
+                if need_time > 0:
+                    time.sleep(need_time)
+                self._dq.append(time.time())
+        result = self._func(*args, **kwargs)
+        return result
+
+
+class BaseConcurrency:
+    """
+    使用queue控制并发量
+    """
+    __slots__ = ()
+    _func = None
+    _dq = None
+
+    def control_(self, *args, **kwargs):
+        self._dq.put(None)
+        result = self._func(*args, **kwargs)
+        self._dq.get()
+
+        return result
+
+
+class Concurrency(BaseNeedTime, BaseConcurrency):
+
+    def __init__(self, times: int, seconds: int = None):
+        """
+        seconds秒执行m次,当只传入times参数,则并发量为times
+        :param times: 次数
+        :param seconds: 秒数
+        """
+
+        ERR_STR = 'Parameter <%s> must be <TYPE:int> and bigger than 0 !'
+        if not (isinstance(times, int) and times > 0):
+            raise ValueError(ERR_STR.format(times))
+
+        if seconds is None:
+            self._dq = Queue(maxsize=times)
+
+        else:
+            if not (isinstance(seconds, int) and seconds > 0):
+                raise ValueError(ERR_STR.format(seconds))
+            self._dq = deque(maxlen=times)
+        self._seconds = seconds
+        self._maxlen = times
 
     def __call__(self, func):
 
-        self.__func = func
-        return self.__append
+        self._func = func
 
-    def __popleft(self):
-        self.__dq.popleft()
+        # 这里需要把函数的参数封装进args,并传递(如果是类方法,args的第0个参数是调用者的self)
+        def warp_(*args, **kwargs):
+            if self._seconds is None:
+                return self.control_(*args, **kwargs)
+            return self.append_time(*args, **kwargs)
 
-    def __append(self, *args, **kwargs):
-
-        with self.lock:
-            if len(self.__dq) < self.__len:
-                # 前m个直接添加
-                # print(f'前{self.__len}个直接添加')
-                self.__dq.append(time.time())
-            else:
-                # 有数据,判断时间再添加进去
-                need_time = self.__seconds - (time.time() - self.__dq[len(self.__dq) - self.__len])
-                need_time = math.ceil(need_time)
-                if need_time > 0:
-                    # print(f'此处等待{need_time}秒')
-                    time.sleep(need_time)
-                    self.__dq.append(time.time())
-                else:
-                    # print(f'不需要等待')
-                    self.__dq.append(time.time())
-
-        result = self.__func(*args, **kwargs)
-        return result
+        return warp_

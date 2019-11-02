@@ -83,6 +83,7 @@ class MyLog(Singleton):
         self.warning_name = warning_name
         self.debug_name = debug_name
         self.debug = debug
+        self.path = dir_path
         if not dir_path:
             self.path = './logs/'
 

@@ -3,9 +3,9 @@
 # @Author  : Liu Yalong
 # @File    : __init__.py
 from .timeout import time_out, run_time
-from .timeslimit import CallTimesLimit
+from .timeslimit import Concurrency
 from .singleton import Singleton
 from .mydata import MyDict
 
 
-__all__ = ['time_out', 'CallTimesLimit', 'Singleton', 'MyDict', 'run_time']
+__all__ = ['time_out', 'Concurrency', 'Singleton', 'MyDict', 'run_time']
