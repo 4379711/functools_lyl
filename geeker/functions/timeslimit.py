@@ -45,10 +45,11 @@ class BaseConcurrency:
 
     def control_(self, *args, **kwargs):
         self._dq.put(None)
-        result = self._func(*args, **kwargs)
-        self._dq.get()
-
-        return result
+        try:
+            result = self._func(*args, **kwargs)
+            return result
+        finally:
+            self._dq.get()
 
 
 class Concurrency(BaseNeedTime, BaseConcurrency):
@@ -80,6 +81,7 @@ class Concurrency(BaseNeedTime, BaseConcurrency):
 
         # 这里需要把函数的参数封装进args,并传递(如果是类方法,args的第0个参数是调用者的self)
         def warp_(*args, **kwargs):
+            warp_.__name__ = func.__name__
             if self._seconds is None:
                 return self.control_(*args, **kwargs)
             return self.append_time(*args, **kwargs)
