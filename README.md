@@ -1,5 +1,5 @@
 
-# 刘亚龙的 functools
+# functools
 
 ##### 一些很有用的工具
 
@@ -20,7 +20,7 @@
 ------------
 
 
-## schedule更改自schedule，修复原作者代码日期不准确BUG，并添加线程控制以解决任务延迟的问题
+## geeker.schedule更改自schedule，修复原作者代码日期不准确等BUG，并添加线程控制以解决任务延迟等问题
 
 		from geeker import schedule
 		import time
@@ -40,7 +40,9 @@
 ## MyLog:日志记录,自动切割，压缩等
 
 		from geeker import MyLog
+		
 		logger=MyLog().getlogger()
+		logger.info('info...')
 		
 
 
@@ -48,19 +50,17 @@
 
         from geeker import Concurrency
 
-        每4秒执行5次abc
+        # 每4秒执行5次abc()
 
         @Concurrency(5,4)
         def abc():
             pass
         
-        并发量为5
+        # 并发量为5
         @Concurrency(5)
         def abc():
             pass
             
-        同样可以装饰类方法
-        
         class Test:
             def __init__(self):
                 pass
@@ -76,25 +76,41 @@
         from geeker import runtime
         
         @run_time
-        def abc():
-            pass
+        def test(i):
+            # int('asfa')
+            time.sleep(i)
+            print('运行结果:', i)
+            
+        >>>
+            START test(1, {})
+            运行结果: 1
+            test(1, {}) takes <1.0006> seconds
+            STOP test(1, {})
 
 ##  Singleton 单例模式
 
     from geeker import Singleton
-    
+    # 实例的属性为第一次初始化时的属性
     class Test(Singleton):
         pass
 
-##  time_out 超时装饰器
+##  TimeOut 超时装饰器
 
-		from geeker import time_out
 
-		@time_out(4)
-		def test(*args):
-		    print("开始执行", args)
-		    time.sleep(args[0])
-		    print("----执行完成", args)
+        from geeker import TimeOut
+        # 精度为0.1秒
+   		
+        @TimeOut(4)
+        def test(i):
+            time.sleep(i)
+        
+        
+        class AA:
+        
+            @TimeOut(3.0)
+            def test(self, i):
+                time.sleep(i)
+
 		
 ##  PyCrypt 加密-解密(已删除此项目)
 
@@ -118,8 +134,12 @@
                 
                 
 ##  MWS相关api
+        from geeker import mws
 
-       from geeker import mws
+        shipment = mws.OutboundShipments(...)
+        resp = shipment.list_all_fulfillment_orders(...)
+        data = resp.parsed
+        
 
 
 ##  特殊字典
@@ -131,6 +151,7 @@
         a.c='fasf'
         a.add_key('key0','value0')
         print(dict(a))
+        使用dict()函数可以直接转换为字典格式
         
         >>>{
             'key': ['value'],

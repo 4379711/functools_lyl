@@ -2,7 +2,7 @@
 # @Time    : 2019/02/22 13:44
 # @Author  : Liu Yalong
 # @File    : __init__.py
-from .timeout import time_out
+from .timeout import TimeOut
 from .timeslimit import Concurrency
 from .singleton import Singleton
 from .mydata import MyDict
@@ -13,7 +13,7 @@ from colorama import init
 
 init(autoreset=True)
 
-__all__ = ['time_out', 'Concurrency', 'Singleton', 'MyDict', 'run_time', 'retry']
+__all__ = ['TimeOut', 'Concurrency', 'Singleton', 'MyDict', 'run_time', 'retry']
 
 
 def retry(n: int, error_type: Exception = Exception):
@@ -46,14 +46,15 @@ def run_time(func):
     # 此装饰器，用来调试函数运行时间及执行流程
     @wraps(func)  # 保留源信息
     def mywarps(*args, **kwargs):
+        func_name = func.__name__
         start_time = time.time()
-        print(f'''\033[32mSTART {func.__name__}{*args, kwargs}\033[0m''')
+        print(f'''\033[32mSTART {func_name}{*args, kwargs}\033[0m''')
         try:
             aa = func(*args, **kwargs)
         finally:
             cost_time = time.time() - start_time
-            print(f'''\033[32m{func.__name__}{*args, kwargs} takes <%.4f> seconds\033[0m''' % cost_time)
-            print(f'''\033[32mSTOP {func.__name__}{*args, kwargs}\033[0m''')
+            print(f'''\033[32m{func_name}{*args, kwargs} takes <%.4f> seconds\033[0m''' % cost_time)
+            print(f'''\033[32mSTOP {func_name}{*args, kwargs}\033[0m''')
         return aa
 
     return mywarps

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2019/02/22 13:39
+# @Time    : 2019/08/22 13:39
 # @Author  : Liu Yalong
 # @File    : __init__.py
 
@@ -10,16 +10,31 @@ import threading
 from functools import wraps
 
 
+# import traceback
+# import sys
+
+
 class MyThread(threading.Thread):
-    def __init__(self, target, args=None, kwargs=None):
-        super().__init__()
+    def __init__(self, target, args=None, kwargs=None, name=None):
+        super().__init__(name=name)
         self.func = target
         self.args = args
         self.kwargs = kwargs
-        self.result = '<__what fuck!__>'
+        self.result = '<_^&^_@**@__what fuck!__@**@_^&^_>'
+        self.exitcode = False
+        self.exception = None
+        # self.exc_traceback = None
 
-    def run(self):
+    def _run(self):
         self.result = self.func(*self.args, **self.kwargs)
+
+    def run(self):  # Overwrite run() method
+        try:
+            self._run()
+        except Exception as e:
+            self.exitcode = True
+            self.exception = e
+            # self.exc_traceback = sys.exc_info()
 
     @property
     def get_result(self):
@@ -28,57 +43,64 @@ class MyThread(threading.Thread):
     @staticmethod
     def _async_raise(tid, exctype):
         """raises the exception, performs cleanup if needed"""
-        tid = ctypes.c_long(tid)
+        # tid = ctypes.c_long(tid)
         if not inspect.isclass(exctype):
             exctype = type(exctype)
-        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
-        if res == 0:
-            raise ValueError("invalid thread id")
-        elif res != 1:
-            ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
-            raise SystemError("PyThreadState_SetAsyncExc failed !")
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+        # res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+        # if res == 0:
+        #     raise ValueError("invalid thread id")
+        # elif res != 1:
+        #     ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+        #     raise SystemError("PyThreadState_SetAsyncExc failed !")
 
-    @classmethod
-    def stop_thread(cls, thread):
-        cls._async_raise(thread.ident, SystemExit)
+    def stop_thread(self, ident=None):
+        if ident:
+            self._async_raise(ident, SystemExit)
+        else:
+            # self._async_raise(threading.get_ident(), SystemExit)
+            for fuck in threading.enumerate():
+                if fuck is self:
+                    self._async_raise(fuck.ident, SystemExit)
+                    break
 
 
-def time_out(limit_time):
-    if not isinstance(limit_time, int):
-        raise ValueError('The type of argument must be int !')
+class TimeOut:
+    def __init__(self, limit_time=1):
+        if not (isinstance(limit_time, (int, float)) and limit_time > 0):
+            raise ValueError('The type of parameter <limit_time> must be int and greater than 0!')
+        self.limit = int(limit_time * 10)
 
-    def warps0(func):
-        def warps1(*args, **kwargs):
-            th = MyThread(target=func, args=args, kwargs=kwargs)
-            th.setDaemon(True)
+    def __raise_error(self, th):
+        # exec_type = th.exc_traceback[0]
+        # tmp_str = traceback.format_exception(th.exc_traceback[0], th.exc_traceback[1], th.exc_traceback[2])
+        # str_ = ''.join(tmp_str[1:])
+        #
+        # th.stop_thread()
+        #
+        # # raise exec_type('\n'+str_)
+        raise th.exception
+
+    def __call__(self, func):
+        @wraps(func)
+        def warp_(*args, **kwargs):
+            warp_.__name__ = func.__name__
+            th = MyThread(target=func, args=args, kwargs=kwargs, name=str(args))
+            th.daemon = True
             th.start()
+            for _ in range(self.limit + 2):
+                if th.exitcode:
+                    self.__raise_error(th)
 
-            # try to get result
-            for _ in range(limit_time):
-                time.sleep(1)
                 is_result = th.get_result
-                if is_result != '<__what fuck!__>':
+
+                if is_result != '<_^&^_@**@__what fuck!__@**@_^&^_>':
                     return is_result
 
-            # kill the thread by itself
-            th.stop_thread(th)
-            raise TimeoutError('Oh,Fuck!TimeOut Error!')
+                if _ == self.limit:
+                    # kill the thread by itself
+                    th.stop_thread()
+                    raise TimeoutError('Oh,Fuck!TimeOut Error!')
+                time.sleep(0.1)
 
-        return warps1
-
-    return warps0
-
-
-def run_time(func):
-    # 此装饰器，用来调试函数运行时间及执行流程
-    @wraps(func)  # 保留源信息
-    def mywarps(*args, **kwargs):
-        start_time = time.time()
-        print(f'''【进入 {func.__name__}】 参数：【{args}】 【{kwargs}】''')
-        aa = func(*args, **kwargs)
-        cost_time = time.time() - start_time
-        print(f'''【{func.__name__}】 耗时:【{cost_time}秒】''')
-        print(f'''【离开 {func.__name__}】''')
-        return aa
-
-    return mywarps
+        return warp_
