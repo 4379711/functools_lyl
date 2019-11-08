@@ -27,15 +27,17 @@ def retry(n: int, error_type: Exception = Exception):
     def times(func):
         @wraps(func)
         def mywraps(*args, **kwargs):
+            error = None
             for _ in range(n):
                 try:
                     # 执行函数
                     result = func(*args, **kwargs)
                     return result
-                except error_type:
+                except error_type as e:
+                    error = e
                     pass
 
-            raise RuntimeError(f'执行<{func.__name__}{*args, kwargs}>\t重试{n}次后仍然失败！')
+            raise RuntimeError(f'执行<{func.__name__}{*args, kwargs}>\t重试{n}次后仍然失败！\n错误信息: {error}\n')
 
         return mywraps
 
