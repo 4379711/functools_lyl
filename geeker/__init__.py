@@ -4,7 +4,7 @@
 # @File    : __init__.py.py
 from __future__ import absolute_import
 
-from .mylog import MyLog
+from .mylog import *
 from . import schedule
 from . import mws
 from .functions import *
@@ -14,15 +14,18 @@ __all__ = ['MyType', 'MyLog', 'TimeOut',
            'schedule', 'mws', 'Concurrency',
            'Singleton', 'MyDict', 'run_time'
            ]
-__UpdateTime__ = '2019/11/7 17:30'
+__UpdateTime__ = '2019/11/11 17:00'
 
 """
 说明：
-    1.geeker.schedule更改自schedule，修复原作者代码日期不准确等BUG，并添加线程控制以解决任务延迟等问题
+    1.geeker.schedule是schedule的二次开发
+        修复原作者代码日期不准确等BUG，并解决任务延迟等问题
+    
     使用方法：
         from geeker import schedule
         import time
-
+        
+        # 待执行任务
         def abc():
             print('abc')
 
@@ -33,12 +36,67 @@ __UpdateTime__ = '2019/11/7 17:30'
         # 开启任务
         while True:
             schedule.run_pending()
+            # 此处可添加参数max_worker 控制任务的总数,如果定时任务较多,则需要增加此参数
+            # schedule.run_pending(max_worker=10)
             time.sleep(1)
 
-    2.mylog:日志记录,自动切割，压缩等
-    使用方法: from geeker import MyLog
-              logger=MyLog().getlogger()
-              logger.info('info...')
+    2.MyLog:
+
+        功能:
+            将日志分日志等级记录,并自动压缩2019-11-11.info.log.gz
+    
+        参数:
+            :param dir_path: 日志记录的路径,默认是当前路径下的log文件夹
+            :param logger_name: logger对象的名字
+            :param info_name: 保存info等级的文件名字
+            :param error_name:
+            :param warning_name:
+            :param debug_name:
+            :param interval: 压缩日志的频率,默认是7天
+            :param detail: bool值,记录日志是否为详细记录
+            :param debug: 是否记录debug,默认不记录
+            :param info: 是否记录info,默认记录
+            :param error:
+            :param warning:
+        实例方法:
+            get_logger()-->logger
+    
+        使用举例:
+            # 记录四种类型的日志
+            logger = MyLog(debug=True).get_logger()
+            logger.info('info')
+            logger.debug('debug')
+            logger.error('error')
+            logger.warning('warning')
+    
+            # # # # # # # # # # # # # # # # # # # # # # # # #
+    
+            # 只记录错误日志
+            logger = MyLog(info=False,warning=False).get_logger()
+            logger.info('info')
+            logger.debug('debug')
+            logger.error('error')
+            logger.warning('warning')
+        注意:
+            MyLog()的实例只会同时存在一个,默认记录首次创建实例的属性.
+            例如:
+    
+                mylog = MyLog('./logs/logs/')
+                mylog2 = MyLog()
+                logger = mylog.get_logger()
+                logger2 = mylog2.get_logger()
+                logger.info('info')
+    
+                logger2 = MyLog('./logs/logs2/').get_logger()
+                logger2.info('info2')
+    
+                以上两个logger logger2,会以logger(第一次创建实例)的属性为准,日志会存放在./logs/logs/下
+    
+        
+        
+        使用方法: from geeker import MyLog
+                  logger=MyLog().getlogger()
+                  logger.info('info...')
 
 
     3.timeslimit :控制函数执行频率
@@ -90,6 +148,10 @@ __UpdateTime__ = '2019/11/7 17:30'
             pass
 
     6.TimeOut 超时装饰器
+    注意:
+        此装饰器需要额外的线程数量来控制任务执行,
+        如在多线程并发情况下使用,请评估机器性能(一般没啥大问题)
+        
     使用方法：
         from geeker import TimeOut
         
@@ -127,6 +189,9 @@ __UpdateTime__ = '2019/11/7 17:30'
         data = resp.parsed
         
     9.MyDict,一个特殊数据类型的字典
+    注意:
+        如需要转换成字典,需要使用dict()可直接转换,转换后可直接存mongo
+        
     使用方法：
         a=MyDict()
         a.append_key('key','value')

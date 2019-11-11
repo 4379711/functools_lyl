@@ -2,168 +2,72 @@
 # @Time    : 2019/10/22 13:33
 # @Author  : Liu Yalong
 # @File    : __init__.py
-
-
-import logging
-import logging.handlers
-from logging.handlers import TimedRotatingFileHandler
-import gzip
+from .log_config import LogBase
 import os
-import time
-
-from ..functions import Singleton
 
 __all__ = ['MyLog']
 
 
-class GzTimedRotatingFileHandler(TimedRotatingFileHandler):
-    def __init__(self, filename, when, interval, **kwargs):
-        super(GzTimedRotatingFileHandler, self).__init__(filename, when, interval, **kwargs)
-
-    def doGzip(self, old_log):
-        with open(old_log, 'rb') as old:
-            with gzip.open(old_log.replace('.log', '', 1) + '.gz', 'wb') as comp_log:
-                comp_log.writelines(old)
-        os.remove(old_log)
-
-    def doRollover(self):
-        if self.stream:
-            self.stream.close()
-            self.stream = None
-        currentTime = int(time.time())
-        dstNow = time.localtime(currentTime)[-1]
-        t = self.rolloverAt - self.interval
-        if self.utc:
-            timeTuple = time.gmtime(t)
-        else:
-            timeTuple = time.localtime(t)
-            dstThen = timeTuple[-1]
-            if dstNow != dstThen:
-                if dstNow:
-                    addend = 3600
-                else:
-                    addend = -3600
-                timeTuple = time.localtime(t + addend)
-        dfn = self.baseFilename + "." + time.strftime(self.suffix, timeTuple)
-        if os.path.exists(dfn):
-            os.remove(dfn)
-        if os.path.exists(self.baseFilename):
-            os.rename(self.baseFilename, dfn)
-            self.doGzip(dfn)
-        if self.backupCount > 0:
-            for s in self.getFilesToDelete():
-                os.remove(s)
-        if not self.delay:
-            self.stream = self._open()
-        newRolloverAt = self.computeRollover(currentTime)
-        while newRolloverAt <= currentTime:
-            newRolloverAt = newRolloverAt + self.interval
-        if (self.when == 'MIDNIGHT' or self.when.startswith('W')) and not self.utc:
-            dstAtRollover = time.localtime(newRolloverAt)[-1]
-            if dstNow != dstAtRollover:
-                if not dstNow:  # DST kicks in before next rollover, so we need to deduct an hour
-                    addend = -3600
-                else:  # DST bows out before next rollover, so we need to add an hour
-                    addend = 3600
-                newRolloverAt += addend
-        self.rolloverAt = newRolloverAt
-
-
-class MyLog(Singleton):
+class MyLog(LogBase):
     """
-    日志系统，error,info,warning分别记录,每周切割并压缩日志
-    debug 是否开启debug模式
+    功能:
+        将日志分日志等级记录,并自动压缩2019-11-11.info.log.gz
+
+    参数:
+        :param dir_path: 日志记录的路径,默认是当前路径下的log文件夹
+        :param logger_name: logger对象的名字
+        :param info_name: 保存info等级的文件名字
+        :param error_name:
+        :param warning_name:
+        :param debug_name:
+        :param interval: 压缩日志的频率,默认是7天
+        :param detail: bool值,记录日志是否为详细记录
+        :param debug: 是否记录debug,默认不记录
+        :param info: 是否记录info,默认记录
+        :param error:
+        :param warning:
+    实例方法:
+        get_logger()-->logger
+
+    使用举例:
+        # 记录四种类型的日志
+        logger = MyLog(debug=True).get_logger()
+        logger.info('info')
+        logger.debug('debug')
+        logger.error('error')
+        logger.warning('warning')
+
+        # # # # # # # # # # # # # # # # # # # # # # # # #
+
+        # 只记录错误日志
+        logger = MyLog(info=False,warning=False).get_logger()
+        logger.info('info')
+        logger.debug('debug')
+        logger.error('error')
+        logger.warning('warning')
+    注意:
+        MyLog()的实例只会同时存在一个,默认记录首次创建实例的属性.
+        例如:
+
+            mylog = MyLog('./logs/logs/')
+            mylog2 = MyLog()
+            logger = mylog.get_logger()
+            logger2 = mylog2.get_logger()
+            logger.info('info')
+
+            logger2 = MyLog('./logs/logs2/').get_logger()
+            logger2.info('info2')
+
+            以上两个logger logger2,会以logger(第一次创建实例)的属性为准,日志会存放在./logs/logs/下
+
+
+
     """
 
-    def __init__(self, dir_path=None, logger_name='lyl', info_name='info.log', error_name='error.log',
-                 warning_name='warning.log', debug_name='debug.log', debug=False):
-        self.info_name = info_name
-        self.logger_name = logger_name
-        self.error_name = error_name
-        self.warning_name = warning_name
-        self.debug_name = debug_name
-        self.debug = debug
-        self.path = dir_path
-        if not dir_path:
-            self.path = './logs/'
-
-    def get_logger(self):
-        logger = logging.getLogger(self.logger_name)
-        if self.path[-1] != '/':
-            self.path += '/'
-        if not os.path.exists(self.path):
-            os.makedirs(self.path)
-
-        # 添加此行，防止日志重复记录
-        if not logger.handlers:
-            # 设置日志等级,默认是INFO
-            if self.debug:
-                logger.setLevel(logging.DEBUG)
-            else:
-                logger.setLevel(logging.INFO)
-
-            # 格式化输出
-            # formatter = logging.Formatter("%(asctime)s - %(filename)s - %(funcName)s - %(message)s",
-            # "%Y%m%d %H:%M:%S")
-            formatter = logging.Formatter("%(asctime)s  - %(message)s", "%Y%m%d %H:%M:%S")
-
-            # 创建两个handler
-            # info_handler = logging.handlers.TimedRotatingFileHandler(self.info_name, when='midnight', interval=7,
-            #                                                          backupCount=7, encoding='utf-8')
-            # error_handler = logging.handlers.TimedRotatingFileHandler(self.error_name, when='midnight', interval=7,
-            #                                                           backupCount=7, encoding='utf-8')
-            # warning_handler = logging.handlers.TimedRotatingFileHandler(self.warning_name, when='midnight',
-            # interval=7,backupCount=7, encoding='utf-8')
-
-            info_handler = GzTimedRotatingFileHandler(self.path + self.info_name, when='D', interval=10,
-                                                      backupCount=7, encoding='utf-8')
-            error_handler = GzTimedRotatingFileHandler(self.path + self.error_name, when='D', interval=10,
-                                                       backupCount=7, encoding='utf-8')
-            warning_handler = GzTimedRotatingFileHandler(self.path + self.warning_name, when='D', interval=10,
-                                                         backupCount=7, encoding='utf-8')
-            if logger.level == logging.DEBUG:
-                debug_handler = GzTimedRotatingFileHandler(self.path + self.debug_name, when='D', interval=10,
-                                                           backupCount=7, encoding='utf-8')
-                debug_handler.suffix = "%Y%m%d.log"
-                debug_handler.setFormatter(formatter)
-                debug_handler.setLevel(logging.DEBUG)
-                debug_filter = logging.Filter()
-                debug_filter.filter = lambda record: record.levelno == logging.DEBUG
-                debug_handler.addFilter(debug_filter)
-                logger.addHandler(debug_handler)
-
-            # # 去掉名字中的.log
-            # info_handler.namer = lambda x: x.replace(".log", '')
-            # error_handler.namer = lambda x: x.replace(".log", '')
-            # warning_handler.namer = lambda x: x.replace(".log", '')
-
-            # # # # 设置日志切割后的名字后缀
-            info_handler.suffix = "%Y%m%d.log"
-            error_handler.suffix = "%Y%m%d.log"
-            warning_handler.suffix = "%Y%m%d.log"
-
-            # 设置日志等级
-            error_handler.setLevel(logging.ERROR)
-            warning_handler.setLevel(logging.WARNING)
-            info_handler.setLevel(logging.INFO)
-
-            # 格式化输出应用给handlers
-            info_handler.setFormatter(formatter)
-            error_handler.setFormatter(formatter)
-            warning_handler.setFormatter(formatter)
-
-            # 添加过滤器，过滤掉info中等级小于warning的
-            info_filter = logging.Filter()
-            info_filter.filter = lambda record: record.levelno == logging.INFO
-
-            warning_filter = logging.Filter()
-            warning_filter.filter = lambda record: record.levelno == logging.WARNING
-
-            info_handler.addFilter(info_filter)
-            warning_handler.addFilter(warning_filter)
-
-            # handler添加给对象
-            logger.addHandler(info_handler)
-            logger.addHandler(error_handler)
-            logger.addHandler(warning_handler)
-        return logger
+    def __init__(self, log_path: str = './logs/', **kwargs):
+        self.type_need(log_path, str)
+        if not log_path.endswith('/'):
+            log_path += '/'
+        if not os.path.exists(log_path):
+            os.makedirs(log_path)
+        super(MyLog, self).__init__(dir_path=log_path, **kwargs)

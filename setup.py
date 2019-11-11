@@ -6,7 +6,7 @@ with open("README.md", "r", encoding='utf-8') as fh:
 
 setup(
     name='geeker',  # '库的名称,一般写成文件夹的名字就可以了
-    version="1.1.0",  # 版本，每次发版本都不能重复，每次发版必须改这个地方
+    version="1.1.1",  # 版本，每次发版本都不能重复，每次发版必须改这个地方
     description=(
         "Many useful functions !"  # 一个简介，别人搜索包时候，这个概要信息会显示在在搜索列表中
     ),
@@ -14,7 +14,7 @@ setup(
     long_description_content_type="text/markdown",
     author='liuyalong',  # 作者
     author_email='4379711@qq.com',
-    maintainer='liuyalong',     # 主要的工作人员
+    maintainer='liuyalong',  # 主要的工作人员
     maintainer_email='4379711@qq.com',
     license='MIT License',
     packages=find_packages(),
@@ -30,9 +30,10 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Topic :: Software Development :: Libraries'
     ],
-    install_requires=[  # 这里是依赖列表，表示运行这个包的运行某些功能还需要你安装其他的包
+    # 这里是依赖列表，表示运行这个包的运行某些功能还需要你安装其他的包
+    install_requires=['colorama'
 
-    ]
+                      ]
 )
 
 # python setup.py check                 检查错误
@@ -41,6 +42,3 @@ setup(
 
 # 以下命令已过时
 # python setup.py sdist upload -r pypi  上传到pypi
-
-
-

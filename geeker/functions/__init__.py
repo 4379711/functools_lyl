@@ -35,7 +35,6 @@ def retry(n: int, error_type: Exception = Exception):
                     return result
                 except error_type as e:
                     error = e
-                    pass
 
             raise RuntimeError(f'执行<{func.__name__}{*args, kwargs}>\t重试{n}次后仍然失败！\n错误信息: {error}\n')
 
