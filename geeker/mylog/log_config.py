@@ -8,7 +8,7 @@ from logging.handlers import TimedRotatingFileHandler
 import gzip
 import os
 import time
-from ..functions import Singleton
+from geeker.functions import Singleton
 
 
 class GzTimedRotatingFileHandler(TimedRotatingFileHandler):

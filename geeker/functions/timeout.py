@@ -15,8 +15,8 @@ from functools import wraps
 
 
 class MyThread(threading.Thread):
-    def __init__(self, target, args=None, kwargs=None, name=None):
-        super().__init__(name=name)
+    def __init__(self, target, args=None, kwargs=None):
+        super().__init__()
         self.func = target
         self.args = args
         self.kwargs = kwargs
@@ -85,9 +85,10 @@ class TimeOut:
         @wraps(func)
         def warp_(*args, **kwargs):
             warp_.__name__ = func.__name__
-            th = MyThread(target=func, args=args, kwargs=kwargs, name=str(args))
+            th = MyThread(target=func, args=args, kwargs=kwargs)
             th.daemon = True
             th.start()
+            # Add 0.1 second here
             for _ in range(self.limit + 2):
                 if th.exitcode:
                     self.__raise_error(th)
@@ -100,7 +101,7 @@ class TimeOut:
                 if _ == self.limit:
                     # kill the thread by itself
                     th.stop_thread()
-                    raise TimeoutError('Oh,Fuck!TimeOut Error!')
+                    raise TimeoutError('Unfinished tasks within the specified time !')
                 time.sleep(0.1)
 
         return warp_

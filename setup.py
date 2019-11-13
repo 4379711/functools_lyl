@@ -6,7 +6,7 @@ with open("README.md", "r", encoding='utf-8') as fh:
 
 setup(
     name='geeker',  # '库的名称,一般写成文件夹的名字就可以了
-    version="1.1.1",  # 版本，每次发版本都不能重复，每次发版必须改这个地方
+    version="1.2.2",  # 版本，每次发版本都不能重复，每次发版必须改这个地方
     description=(
         "Many useful functions !"  # 一个简介，别人搜索包时候，这个概要信息会显示在在搜索列表中
     ),
@@ -31,7 +31,8 @@ setup(
         'Topic :: Software Development :: Libraries'
     ],
     # 这里是依赖列表，表示运行这个包的运行某些功能还需要你安装其他的包
-    install_requires=['colorama'
+    install_requires=['colorama',
+                      'click'
 
                       ]
 )

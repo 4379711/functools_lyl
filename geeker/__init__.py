@@ -3,7 +3,6 @@
 # @Author  : Liu Yalong
 # @File    : __init__.py.py
 from __future__ import absolute_import
-
 from .mylog import *
 from . import schedule
 from . import mws
@@ -12,7 +11,8 @@ from .utils import *
 
 __all__ = ['MyType', 'MyLog', 'TimeOut',
            'schedule', 'mws', 'Concurrency',
-           'Singleton', 'MyDict', 'run_time'
+           'Singleton', 'MyDict', 'run_time',
+
            ]
 __UpdateTime__ = '2019/11/11 17:00'
 
