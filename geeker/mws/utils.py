@@ -36,17 +36,25 @@ class ObjectDict(dict):
     def __setstate__(self, item):
         return False
 
+    # TODO for pickle
+    # def __getstate__(self):
+    #
+    #     pass
+
     def __setattr__(self, item, value):
         self.__setitem__(item, value)
 
     def getvalue(self, item, value=None):
+        """
+        Old Python 2-compatible getter method for default value.
+        """
         return self.get(item, {}).get('value', value)
 
 
 class XML2Dict(object):
 
-    def __init__(self):
-        pass
+    def __init__(self, rootkey=None):
+        self.rootkey = rootkey
 
     def _parse_node(self, node):
         node_tree = ObjectDict()
@@ -96,7 +104,7 @@ class XML2Dict(object):
         """
         text = ET.fromstring(str_)
         root_tag, root_tree = self._namespace_split(text.tag, self._parse_node(text))
-        return ObjectDict({root_tag: root_tree})
+        return ObjectDict({self.rootkey: ObjectDict({root_tag: root_tree})})
 
 
 def enumerate_param(param, values):
