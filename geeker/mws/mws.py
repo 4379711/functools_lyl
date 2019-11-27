@@ -345,7 +345,11 @@ class MWS(object):
                     parsed_response = DictWrapper(data, rootkey)
                 except TypeError:  # raised when using Python 3 and trying to remove_namespace()
                     # When we got CSV as result, we will got error on this
-                    parsed_response = DictWrapper(response.text, rootkey)
+                    tmp_ = response.text
+                    if isinstance(tmp_, (bytes, bytearray)):
+                        tmp_ = tmp_.decode(encoding=response.encoding)
+
+                    parsed_response = DictWrapper(tmp_, rootkey)
 
             except XMLError:
                 parsed_response = DataWrapper(data, response.headers)
