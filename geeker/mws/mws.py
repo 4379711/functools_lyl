@@ -41,19 +41,33 @@ __all__ = [
 # for a list of the end points and marketplace IDs
 
 MARKETPLACES = {
-    "CA": "https://mws.amazonservices.ca",  # A2EUQ1WTGCTBG2
-    "US": "https://mws.amazonservices.com",  # ATVPDKIKX0DER",
+
+    # North America region
+    "CA": "https://mws.amazonservices.ca",      # A2EUQ1WTGCTBG2
+    "BR": "https://mws.amazonservices.com",     # A2Q3Y263D00KWC
+    "MX": "https://mws.amazonservices.com.mx",  # A1AM78C64UM0Y8
+    "US": "https://mws.amazonservices.com",     # ATVPDKIKX0DER"
+
+    # Europe region
     "DE": "https://mws-eu.amazonservices.com",  # A1PA6795UKMFR9
     "ES": "https://mws-eu.amazonservices.com",  # A1RKKUPIHCS9HS
     "FR": "https://mws-eu.amazonservices.com",  # A13V1IB3VIYZZH
-    "IN": "https://mws.amazonservices.in",  # A21TJRUUN4KGV
+    "IN": "https://mws.amazonservices.in",      # A21TJRUUN4KGV
     "IT": "https://mws-eu.amazonservices.com",  # APJ6JRA9NG5V4
     "UK": "https://mws-eu.amazonservices.com",  # A1F83G8C2ARO7P
-    "JP": "https://mws.amazonservices.jp",  # A1VC38T7YXB528
-    "CN": "https://mws.amazonservices.com.cn",  # AAHKV2X7AFYLW
-    "MX": "https://mws.amazonservices.com.mx",  # A1AM78C64UM0Y8
+    "GB": "https://mws-eu.amazonservices.com",  # A1F83G8C2ARO7P
+    "AE": "https://mws.amazonservices.ae",      # A2VIGQ35RCS4UG
+    "EG": "https://mws-eu.amazonservices.com",  # ARBP9OOSHTCHU
+    "SA": "https://mws-eu.amazonservices.com",  # A17E79C6D8DWNP
+    "TR": "https://mws-eu.amazonservices.com",  # A33AVAJ2PDY3EV
+
+    # Far East region
     "AU": "https://mws.amazonservices.com.au",  # A39IBJ37TRP1C6
-    "BR": "https://mws.amazonservices.com",  # A2Q3Y263D00KWC
+    "SG": "https://mws-fe.amazonservices.com",  # A19VAU5U5O7RUS
+    "JP": "https://mws.amazonservices.jp",      # A1VC38T7YXB528
+
+    # other
+    "CN": "https://mws.amazonservices.com.cn",  # AAHKV2X7AFYLW
 }
 
 

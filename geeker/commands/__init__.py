@@ -156,8 +156,8 @@ mdict = {
                 from geeker import MyType
 
                 class Test:
-                    lll = MyType('str_type1', except_type=str)
-                    llll = MyType('str_type2', except_type=str)
+                    lll = MyType('str_type1', expect_type=str)
+                    llll = MyType('str_type2', expect_type=str)
 
                     def __init__(self, value, ):
                         self.lll = value

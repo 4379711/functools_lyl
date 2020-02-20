@@ -10,7 +10,7 @@ with open("README.md", "r", encoding='utf-8') as fh:
 
 setup(
     name='geeker',
-    version="1.2.4",
+    version="1.2.6",
     description=(
         "Many useful functions !"
     ),

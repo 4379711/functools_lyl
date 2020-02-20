@@ -21,16 +21,16 @@ class Descripter:
 
 
 class MyType(Descripter):
-    except_type = type(None)
+    expect_type = type(None)
 
     def __init__(self, name=None, **opts):
-        if not opts.get('except_type'):
+        if not opts.get('expect_type'):
             raise ValueError('Missing argument except_type')
         else:
-            self.except_type = opts.get('except_type')
+            self.expect_type = opts.get('expect_type')
         super().__init__(name=name)
 
     def __set__(self, instance, value):
-        if not isinstance(value, self.except_type):
-            raise TypeError(f'Except {self.except_type} but got {type(value)}')
+        if not isinstance(value, self.expect_type):
+            raise TypeError(f'Except {self.expect_type} but got {type(value)}')
         super().__set__(instance, value)
