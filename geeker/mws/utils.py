@@ -10,14 +10,6 @@ class ObjectDict(dict):
     """
     Extension of dict to allow accessing keys as attributes.
 
-    Example:
-    >>> a = ObjectDict()
-    >>> a.fish = 'fish'
-    >>> a['fish']
-    'fish'
-    >>> a['water'] = 'water'
-    >>> a.water
-    'water'
     """
 
     def __init__(self, initd=None):
@@ -251,3 +243,26 @@ def next_token_action(action_name):
         return _wrapped_func
 
     return _decorator
+
+
+class ParameterError(Exception):
+
+    def __init__(self, *args):
+        self.args = args
+
+    def __str__(self):
+        return "{} Parameters Can't be set together !".format(self.args)
+
+    __repr__ = __str__
+
+
+class RequestDataTypeError(Exception):
+
+    def __init__(self, arg):
+        self.arg = arg
+
+    def __str__(self):
+        return "Request data parameters <{}> must be dict or list ,got {} !".format(self.arg, type(self.arg))
+
+    __repr__ = __str__
+
