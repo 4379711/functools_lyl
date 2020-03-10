@@ -301,74 +301,76 @@ class Portfolios(Client):
 
 class Campaigns(Client):
 
-    def get_campaign(self, campaign_id, **params):
-        interface = '{spon}/campaigns/{campaign_id}'.format(
-            spon=('spon'),
-            campaign_id=campaign_id
-        )
+    def get_campaign(self, campaign_id):
+        interface = 'sp/campaigns/{}'.format(campaign_id)
         return self._request(interface)
 
-    def get_campaign_ex(self, campaign_id, **params):
-        interface = '{spon}/campaigns/extended/{campaign_id}'.format(
-            spon=('spon'),
-            campaign_id=campaign_id
-        )
+    def get_campaign_ex(self, campaign_id):
+        interface = 'sp/campaigns/extended/{campaign_id}'.format(campaign_id=campaign_id)
         return self._request(interface)
 
-    def create_campaigns(self, portfolioId: int,
-                         name, targetingType, state,
-                         dailyBudget: (int, float),
-                         startDate, *params):
-        MyTypeAssert.number_assert(portfolioId, dailyBudget)
+    def create_campaigns(self, name, targetingType, state, dailyBudget: (int, float),
+                         startDate, campaignType='sponsoredProducts',
+                         all_data_list=None, **params):
+        interface = 'sp/campaigns'
+        if all_data_list is not None:
+            return self._request(interface, method='POST', payload=all_data_list)
+        MyTypeAssert.number_assert(dailyBudget)
         assert len(startDate) == 8
         assert targetingType in ["manual", "auto"]
         assert state in ["enabled", "paused", "archived"]
 
-        interface = 'sp/campaigns'
-        data = {
-            'portfolioId': portfolioId,
+        data = [{
             'name': name,
             'targetingType': targetingType,
             'state': state,
             'dailyBudget': dailyBudget,
-            'startDate': startDate
+            'startDate': startDate,
+            'campaignType': campaignType
 
-        }
+        }]
+        data[0].update(params)
 
-        return self._request(interface, method='POST', payload=params)
+        return self._request(interface, method='POST', payload=data)
 
-    def update_campaigns(self, **params):
-        interface = '{}/campaigns'.format(('spon'))
+    def update_campaigns(self, campaignId, all_data_list=None, **params):
+        interface = 'sp/campaigns'
+        if all_data_list is not None:
+            return self._request(interface, method='PUT', payload=all_data_list)
+        MyTypeAssert.number_assert(campaignId)
 
-        return self._request(interface, method='PUT', payload=params)
+        data = [{
+            'campaignId': campaignId
+        }]
+        data[0].update(params)
 
-    def delete_campaign(self, campaign_id, **params):
-        interface = '{spon}/campaigns/{campaign_id}'.format(
-            spon=('spon'),
-            campaign_id=campaign_id
-        )
+        return self._request(interface, method='PUT', payload=data)
+
+    def archive_campaign(self, campaign_id):
+        MyTypeAssert.number_assert(campaign_id)
+        interface = 'sp/campaigns/{campaign_id}'.format(campaign_id=campaign_id)
         return self._request(interface, method='DELETE')
 
     def list_campaigns(self, **params):
-        interface = '{}/campaigns'.format(('spon'))
+        interface = 'sp/campaigns'
         payload = {
-            'startIndex': ('startIndex'),
-            'count': ('count'),
-            'stateFilter': ('stateFilter'),
-            'name': ('name'),
-            'portfolioIdFilter': ('portfolioIdFilter'),
-            'campaignIdFilter': ('campaignIdFilter')
+            'startIndex': params.get('startIndex'),
+            'count': params.get('count'),
+            'stateFilter': params.get('stateFilter'),
+            'name': params.get('name'),
+            'portfolioIdFilter': params.get('portfolioIdFilter'),
+            'campaignIdFilter': params.get('campaignIdFilter')
         }
         return self._request(interface, payload=payload)
 
     def list_campaigns_ex(self, **params):
-        interface = '{}/campaigns/extended'.format(('spon'))
+        interface = 'sp/campaigns/extended'
         payload = {
-            'startIndex': ('startIndex'),
-            'count': ('count'),
-            'stateFilter': ('stateFilter'),
-            'name': ('name'),
-            'campaignIdFilter': ('campaignIdFilter')
+            'startIndex': params.get('startIndex'),
+            'count': params.get('count'),
+            'stateFilter': params.get('stateFilter'),
+            'name': params.get('name'),
+            'campaignIdFilter': params.get('campaignIdFilter')
         }
         return self._request(interface, payload=payload)
 
@@ -376,48 +378,72 @@ class Campaigns(Client):
 class AdGroups(Client):
 
     def get_ad_group(self, ad_group_id):
+        MyTypeAssert.number_assert(ad_group_id)
         interface = 'sp/adGroups/{}'.format(ad_group_id)
         return self._request(interface)
 
     def get_ad_group_ex(self, ad_group_id):
+        MyTypeAssert.number_assert(ad_group_id)
         interface = 'sp/adGroups/extended/{}'.format(ad_group_id)
         return self._request(interface)
 
-    def create_ad_groups(self, **params):
+    def create_ad_groups(self, campaignId, name, state, defaultBid, all_data_list=None, **params):
         interface = 'sp/adGroups'
+        if all_data_list is not None:
+            return self._request(interface, method='POST', payload=all_data_list)
+        assert state in ["enabled", "paused", "archived"]
+        MyTypeAssert.number_assert(campaignId, defaultBid)
+        MyTypeAssert.str_assert(name, state)
+        data = [{
+            'campaignId': campaignId,
+            'name': name,
+            'state': state,
+            'defaultBid': defaultBid
+        }]
+        data[0].update(params)
 
-        return self._request(interface, method='POST', payload=params)
+        return self._request(interface, method='POST', payload=data)
 
-    def update_ad_groups(self, **params):
+    def update_ad_groups(self, adGroupId, state=None, all_data_list=None, **params):
         interface = 'sp/adGroups'
+        if all_data_list is not None:
+            return self._request(interface, method='PUT', payload=all_data_list)
+        MyTypeAssert.number_assert(adGroupId)
+        if state is not None:
+            assert state in ["enabled", "paused", "archived"]
+        data = [{
+            'adGroupId': adGroupId,
+            'state': state,
+        }]
+        data[0].update(params)
+        return self._request(interface, method='PUT', payload=data)
 
-        return self._request(interface, method='PUT', payload=params)
-
-    def delete_ad_group(self, ad_group_id):
+    def archive_ad_group(self, ad_group_id):
+        MyTypeAssert.number_assert(ad_group_id)
         interface = 'sp/adGroups/{}'.format(ad_group_id)
         return self._request(interface, method='DELETE')
 
     def list_ad_groups(self, **params):
         interface = 'sp/adGroups'
         payload = {
-            'startIndex': ('startIndex'),
-            'count': ('count'),
-            'stateFilter': ('stateFilter'),
-            'name': ('name'),
-            'adGroupIdFilter': ('adGroupIdFilter'),
-            'campaignIdFilter': ('campaignIdFilter')
+            'startIndex': params.get('startIndex'),
+            'count': params.get('count'),
+            'stateFilter': params.get('stateFilter'),
+            'name': params.get('name'),
+            'adGroupIdFilter': params.get('adGroupIdFilter'),
+            'campaignIdFilter': params.get('campaignIdFilter')
         }
         return self._request(interface, payload=payload)
 
     def list_ad_groups_ex(self, **params):
         interface = 'sp/adGroups/extended'
         payload = {
-            'startIndex': ('startIndex'),
-            'count': ('count'),
-            'stateFilter': ('stateFilter'),
-            'name': ('name'),
-            'adGroupIdFilter': ('adGroupIdFilter'),
-            'campaignIdFilter': ('campaignIdFilter')
+            'startIndex': params.get('startIndex'),
+            'count': params.get('count'),
+            'stateFilter': params.get('stateFilter'),
+            'name': params.get('name'),
+            'adGroupIdFilter': params.get('adGroupIdFilter'),
+            'campaignIdFilter': params.get('campaignIdFilter')
         }
         return self._request(interface, payload=payload)
 
