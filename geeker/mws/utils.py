@@ -266,3 +266,43 @@ class RequestDataTypeError(Exception):
 
     __repr__ = __str__
 
+
+class MyTypeError(Exception):
+
+    def __init__(self, arg, types):
+        self.arg = arg
+        self.types = types
+
+    def __str__(self):
+        return "Parameters  must be {} ,got {} !".format(self.types, type(self.arg))
+
+    __repr__ = __str__
+
+
+class MyTypeAssert:
+
+    @staticmethod
+    def number_assert(*args):
+        MyTypeAssert.other_assert(*args, types=(float, int))
+
+    @staticmethod
+    def bool_assert(*args):
+        MyTypeAssert.other_assert(*args, types=bool)
+
+    @staticmethod
+    def str_assert(*args):
+        MyTypeAssert.other_assert(*args, types=str)
+
+    @staticmethod
+    def other_assert(*args, types):
+        all_types = []
+        if isinstance(types, tuple):
+            for i in types:
+                all_types.append(i.__name__)
+        else:
+            all_types.append(types.__name__)
+
+        for i in args:
+            # assert isinstance(i, types)
+            if not isinstance(i, types):
+                raise MyTypeError(i, all_types)

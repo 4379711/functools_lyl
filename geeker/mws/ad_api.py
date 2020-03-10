@@ -3,7 +3,9 @@ import datetime
 import json
 from requests import api as request_api
 
-from .utils import ParameterError, RequestDataTypeError
+from .utils import RequestDataTypeError
+from .utils import MyTypeAssert
+
 from .ad_config import *
 
 
@@ -246,16 +248,20 @@ class Portfolios(Client):
         interface = 'portfolios/extended/{}'.format(portfolio_id)
         return self._request(interface)
 
-    def create_portfolios(self, amount, policy, start_date=None, end_date=None, name=None, state='enabled'):
+    def create_portfolios(self, amount, policy, start_date=None, end_date=None,
+                          name=None, state='enabled', all_data_list=None):
 
+        interface = 'portfolios'
+        if all_data_list is not None:
+            return self._request(interface, method='PUT', payload=all_data_list)
         assert policy in ['dateRange', 'monthlyRecurring']
         if start_date:
             assert len(start_date) == 8
+
+        # todo Inconsistent with the official documentation description .
         # if policy == 'monthlyRecurring' and start_date:
         #     raise ParameterError('monthlyRecurring', 'startDate')
 
-        interface = 'portfolios'
-        # todo add more config in list .
         data = [{'name': name,
                  'budget': {'amount': amount,
                             'policy': policy,
@@ -266,10 +272,105 @@ class Portfolios(Client):
                  }]
         return self._request(interface, method='POST', payload=data)
 
-    def update_portfolios(self, **params):
+    def update_portfolios(self, portfolio_id: int, amount, policy, start_date=None,
+                          end_date=None, state='enabled', name=None, all_data_list=None):
         interface = 'portfolios'
+        if all_data_list is not None:
+            return self._request(interface, method='PUT', payload=all_data_list)
+        MyTypeAssert.number_assert(portfolio_id)
+        assert policy in ['dateRange', 'monthlyRecurring']
+        if start_date:
+            assert len(start_date) == 8
+
+        # todo Inconsistent with the official documentation description .
+        # if policy == 'monthlyRecurring' and start_date:
+        #     raise ParameterError('monthlyRecurring', 'startDate')
+
+        data = [{
+            'portfolioId': portfolio_id,
+            'name': name,
+            'budget': {'amount': amount,
+                       'policy': policy,
+                       'startDate': start_date,
+                       'endDate': end_date
+                       },
+            'state': state
+        }]
+        return self._request(interface, method='PUT', payload=data)
+
+
+class Campaigns(Client):
+
+    def get_campaign(self, campaign_id, **params):
+        interface = '{spon}/campaigns/{campaign_id}'.format(
+            spon=('spon'),
+            campaign_id=campaign_id
+        )
+        return self._request(interface)
+
+    def get_campaign_ex(self, campaign_id, **params):
+        interface = '{spon}/campaigns/extended/{campaign_id}'.format(
+            spon=('spon'),
+            campaign_id=campaign_id
+        )
+        return self._request(interface)
+
+    def create_campaigns(self, portfolioId: int,
+                         name, targetingType, state,
+                         dailyBudget: (int, float),
+                         startDate, *params):
+        MyTypeAssert.number_assert(portfolioId, dailyBudget)
+        assert len(startDate) == 8
+        assert targetingType in ["manual", "auto"]
+        assert state in ["enabled", "paused", "archived"]
+
+        interface = 'sp/campaigns'
+        data = {
+            'portfolioId': portfolioId,
+            'name': name,
+            'targetingType': targetingType,
+            'state': state,
+            'dailyBudget': dailyBudget,
+            'startDate': startDate
+
+        }
+
+        return self._request(interface, method='POST', payload=params)
+
+    def update_campaigns(self, **params):
+        interface = '{}/campaigns'.format(('spon'))
 
         return self._request(interface, method='PUT', payload=params)
+
+    def delete_campaign(self, campaign_id, **params):
+        interface = '{spon}/campaigns/{campaign_id}'.format(
+            spon=('spon'),
+            campaign_id=campaign_id
+        )
+        return self._request(interface, method='DELETE')
+
+    def list_campaigns(self, **params):
+        interface = '{}/campaigns'.format(('spon'))
+        payload = {
+            'startIndex': ('startIndex'),
+            'count': ('count'),
+            'stateFilter': ('stateFilter'),
+            'name': ('name'),
+            'portfolioIdFilter': ('portfolioIdFilter'),
+            'campaignIdFilter': ('campaignIdFilter')
+        }
+        return self._request(interface, payload=payload)
+
+    def list_campaigns_ex(self, **params):
+        interface = '{}/campaigns/extended'.format(('spon'))
+        payload = {
+            'startIndex': ('startIndex'),
+            'count': ('count'),
+            'stateFilter': ('stateFilter'),
+            'name': ('name'),
+            'campaignIdFilter': ('campaignIdFilter')
+        }
+        return self._request(interface, payload=payload)
 
 
 class AdGroups(Client):
@@ -349,63 +450,6 @@ class Bid(Client):
             'primaryAdGroupId': ('primaryAdGroupId')
         }
         return self._request(interface, method='PUT', payload=payload)
-
-
-class Campaigns(Client):
-
-    def get_campaign(self, campaign_id, **params):
-        interface = '{spon}/campaigns/{campaign_id}'.format(
-            spon=('spon'),
-            campaign_id=campaign_id
-        )
-        return self._request(interface)
-
-    def get_campaign_ex(self, campaign_id, **params):
-        interface = '{spon}/campaigns/extended/{campaign_id}'.format(
-            spon=('spon'),
-            campaign_id=campaign_id
-        )
-        return self._request(interface)
-
-    def create_campaigns(self, **params):
-        interface = 'sp/campaigns'
-
-        return self._request(interface, method='POST', payload=params)
-
-    def update_campaigns(self, **params):
-        interface = '{}/campaigns'.format(('spon'))
-
-        return self._request(interface, method='PUT', payload=params)
-
-    def delete_campaign(self, campaign_id, **params):
-        interface = '{spon}/campaigns/{campaign_id}'.format(
-            spon=('spon'),
-            campaign_id=campaign_id
-        )
-        return self._request(interface, method='DELETE')
-
-    def list_campaigns(self, **params):
-        interface = '{}/campaigns'.format(('spon'))
-        payload = {
-            'startIndex': ('startIndex'),
-            'count': ('count'),
-            'stateFilter': ('stateFilter'),
-            'name': ('name'),
-            'portfolioIdFilter': ('portfolioIdFilter'),
-            'campaignIdFilter': ('campaignIdFilter')
-        }
-        return self._request(interface, payload=payload)
-
-    def list_campaigns_ex(self, **params):
-        interface = '{}/campaigns/extended'.format(('spon'))
-        payload = {
-            'startIndex': ('startIndex'),
-            'count': ('count'),
-            'stateFilter': ('stateFilter'),
-            'name': ('name'),
-            'campaignIdFilter': ('campaignIdFilter')
-        }
-        return self._request(interface, payload=payload)
 
 
 class Keywords(Client):
