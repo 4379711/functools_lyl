@@ -43,7 +43,7 @@ setup(
 
     install_requires=['colorama',
                       'click',
-                      'requests'
+                      'requests', 'pandas'
                       ]
 )
 
