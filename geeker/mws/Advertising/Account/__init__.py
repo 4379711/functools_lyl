@@ -3,10 +3,10 @@ import json
 
 from requests import api as request_api
 from ..config import *
-from ..utils import remove_empty, MyTypeAssert
+from ..utils import remove_empty, MyTypeAssert, MixParams
 
 
-class Client:
+class Client(MixParams):
     """
     Base advertising API .
     """

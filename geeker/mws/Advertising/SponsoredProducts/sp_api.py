@@ -171,14 +171,13 @@ class ProductAds(Client):
         return self.make_request(interface)
 
     def create_product_ad(self, campaign_id, ad_group_id, sku, state, all_data_list=None, **params):
+        interface = 'sp/productAds'
+        if all_data_list is not None:
+            return self.make_request(interface, method='POST', payload=all_data_list)
         # Sellers use SKU, while vendors use ASIN.
         MyTypeAssert.number_assert(campaign_id, ad_group_id)
         MyTypeAssert.str_assert(sku)
         assert state in ["enabled", "paused", "archived"]
-
-        interface = 'sp/productAds'
-        if all_data_list is not None:
-            return self.make_request(interface, method='POST', payload=all_data_list)
 
         data = [
             {'campaignId': campaign_id,
@@ -289,7 +288,7 @@ class Bid(Client):
         interface = 'keywords/{}/bidRecommendations'.format(keyword_id)
         return self.make_request(interface, headers=self.sandbox_header)
 
-    def create_keywords_bid_recommendations(self, ad_group_id, keywords, match_type, all_keywords_list=None):
+    def create_keywords_bid_recommendations(self, ad_group_id, match_type=None, keywords=None, all_keywords_list=None):
         interface = 'keywords/bidRecommendations'
         MyTypeAssert.number_assert(ad_group_id)
         if all_keywords_list is not None:

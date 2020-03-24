@@ -3,6 +3,38 @@ import datetime
 import pandas as pd
 
 from ..config import DOWNLOADS_PATH
+from functools import wraps
+from types import MethodType
+
+
+class MixParams:
+    """
+    Listen for all subclass methods.If subclass method parameters are passed <__kw_params>,
+  Then cancel all other parameters, for example:
+    the required parameters can be passed ,just use params <__kw_params> .
+    """
+
+    __kw_params = 'all_data_list'  # The word for listening
+
+    def __getattribute__(self, item):
+        func = super(MixParams, self).__getattribute__(item)
+        if isinstance(func, MethodType) and not func.__name__.startswith('_'):
+            @wraps(func)
+            def warps_(*args, **kwargs):
+                tmp = self.__kw_params
+                arg_count = func.__code__.co_argcount
+                values = kwargs.pop(tmp, {})
+                if tmp in func.__code__.co_varnames and values:
+                    # -2 : __kw_params and self
+                    arg_none = [None] * (arg_count - 2)
+                    kwargs.update({self.__kw_params: values})
+                    return func(*arg_none, **kwargs)
+                else:
+                    return func(*args, **kwargs)
+
+            return warps_
+        else:
+            return func
 
 
 class ParameterError(Exception):
