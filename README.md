@@ -96,7 +96,10 @@
     
 ------------   
 
-## timeslimit :控制函数执行频率
+## Concurrency :控制函数执行频率
+
+>(用于多线程模型,协程无效)
+
 
         from geeker import Concurrency
 
@@ -227,4 +230,19 @@
             }
                 
 ------------
+
+## Advertising API 
+> 亚马逊广告API,目前仅实现SP部分
+
+
+    from geeker import SponsoredProducts as sp
+    ad = sp.ProductAds(client_id, client_secret, access_token, refresh_token, 'US',
+                    profile_id=profile, sandbox=True)
+    resp = ad.list_product_ads_ex()
+    print(resp.json())
+    
+    #####################
+    from geeker import Account
+    ad = Account.Client(client_id, client_secret, access_token, refresh_token, 'US',
+                    profile_id=profile, sandbox=True, redirect_uri=redirect_uri)
 

@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2019/7/6 14:21
-# @Author  : Liu Yalong
-# @File    : __init__.py.py
+
 from __future__ import absolute_import
 from .mylog import *
 from . import schedule
 from . import mws
 from .functions import *
 from .utils import *
+from .mws.Advertising import SponsoredProducts
+from .mws.Advertising import Account
 
 __all__ = ['MyType', 'MyLog', 'TimeOut',
            'schedule', 'mws', 'Concurrency',
            'Singleton', 'MyDict', 'run_time',
-
+           "retry", 'SponsoredProducts', 'Account'
            ]
-__UpdateTime__ = '2019/11/11 17:00'
+__UpdateTime__ = '2020/05/19 10:00'
 
 """
 说明：
@@ -99,7 +99,7 @@ __UpdateTime__ = '2019/11/11 17:00'
                   logger.info('info...')
 
 
-    3.timeslimit :控制函数执行频率
+    3.Concurrency :控制函数执行频率(多线程模型,协程无效)
     使用方法：
         from geeker import Concurrency
 
@@ -205,4 +205,15 @@ __UpdateTime__ = '2019/11/11 17:00'
             'c': 'fasf', 
             'key0': {'value0'}
             }
+    10.Advertising API 亚马逊广告API,目前仅实现SP部分
+    from geeker import SponsoredProducts as sp
+    ad = sp.ProductAds(client_id, client_secret, access_token, refresh_token, 'US',
+                    profile_id=profile, sandbox=True)
+    resp = ad.list_product_ads_ex()
+    print(resp.json())
+    
+    from geeker import Account
+    #####################
+    ad = Account.Client(client_id, client_secret, access_token, refresh_token, 'US',
+                    profile_id=profile, sandbox=True, redirect_uri=redirect_uri)
 """

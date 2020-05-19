@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-DOWNLOADS_PATH = './downloads/'
 MARKETPLACES = {'US': 'NA',
                 'CA': 'NA',
 
@@ -14,7 +13,13 @@ MARKETPLACES = {'US': 'NA',
                 'DE': 'EU',
                 'AE': 'EU',
                 }
-OAUTH_URL = 'https://api.amazon.com/auth/o2/token'
+
+OAUTH_URL_ENDPOINTS = {
+    'NA': 'https://api.amazon.com/auth/o2/token',
+    'EU': 'https://api.amazon.co.uk/auth/o2/token',
+    'FE': 'https://api.amazon.co.jp/auth/o2/token'
+}
+
 ENDPOINTS = {
     'sandbox': 'advertising-api-test.amazon.com',
     'NA': 'advertising-api.amazon.com',

@@ -12,7 +12,15 @@ class Client(MixParams):
     """
     VERSION = '/v2'
 
-    def __init__(self, client_id, client_secret, access_token, refresh_token, region, profile_id=None, sandbox=True):
+    def __init__(self, client_id,
+                 client_secret,
+                 access_token,
+                 refresh_token,
+                 region,
+                 profile_id=None,
+                 sandbox=True,
+                 redirect_uri=''
+                 ):
         """
         :param client_id: client id
         :param client_secret: client password
@@ -29,8 +37,32 @@ class Client(MixParams):
         self._profile_id = profile_id
         self.sandbox = sandbox
         self.region = region.upper()
+        self.redirect_uri = redirect_uri
         assert self.region in MARKETPLACES.keys()
         self._host = ENDPOINTS[MARKETPLACES[self.region]] if not sandbox else ENDPOINTS['sandbox']
+
+    def get_refresh_token_by_code(self, authorization_code):
+        assert self.redirect_uri != ''
+        """
+
+        :param code:authorization code
+        :return: resp.
+        """
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'charset': 'UTF-8'
+        }
+        data = {
+            'grant_type': 'authorization_code',
+            'code': authorization_code,
+            'redirect_uri': self.redirect_uri,
+            'client_id': self.client_id,
+            'client_secret': self.client_secret
+        }
+        url = OAUTH_URL_ENDPOINTS[MARKETPLACES[self.region]]
+
+        resp = request_api.post(url=url, headers=headers, data=json.dumps(data))
+        return resp
 
     @property
     def access_token(self):
@@ -58,12 +90,10 @@ class Client(MixParams):
             'client_secret': self.client_secret,
             'refresh_token': self.refresh_token
         }
-        resp = request_api.post(OAUTH_URL,
+        resp = request_api.post(OAUTH_URL_ENDPOINTS[MARKETPLACES[self.region]],
                                 headers=headers,
                                 data=json.dumps(data))
         self._access_token = dict(resp.json()).get('access_token')
-        print('got new token :')
-        print(self._access_token)
 
     def _get_header(self, **params):
         # you can set headers in params.
@@ -279,3 +309,7 @@ class Portfolios(Client):
             'state': state
         }]
         return self.make_request(interface, method='PUT', payload=data)
+
+
+class SbClient(Client):
+    VERSION = ''

@@ -2,7 +2,6 @@
 import datetime
 import pandas as pd
 
-from ..config import DOWNLOADS_PATH
 from functools import wraps
 from types import MethodType
 
@@ -141,5 +140,5 @@ def remove_empty(data_):
 
 def convert_json_to_csv(json_file, file_name):
     df = pd.read_json(json_file)
-    to_file_path = '{}{}.csv'.format(DOWNLOADS_PATH,file_name)
+    to_file_path = '{}.csv'.format(file_name)
     df.to_csv(to_file_path)
