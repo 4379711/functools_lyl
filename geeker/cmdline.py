@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2019/11/13 11:52
-# @Author  : Liu Yalong
-# @File    : cmdline.py
+
 from geeker.commands import base_command
 import sys
 

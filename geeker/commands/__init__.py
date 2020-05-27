@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2019/11/12 13:41
-# @Author  : Liu Yalong
-# @File    : __init__.py.py
+
 import click
 
 mdict = {

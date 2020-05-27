@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2019/11/11 16:09
-# @Author  : Liu Yalong
-# @File    : log_config.py
+
 import logging
 import logging.handlers
 from logging.handlers import TimedRotatingFileHandler
@@ -15,7 +13,8 @@ class GzTimedRotatingFileHandler(TimedRotatingFileHandler):
     def __init__(self, filename, when, interval, **kwargs):
         super(GzTimedRotatingFileHandler, self).__init__(filename, when, interval, **kwargs)
 
-    def doGzip(self, old_log):
+    @staticmethod
+    def do_gzip(old_log):
         with open(old_log, 'rb') as old:
             with gzip.open(old_log.replace('.log', '', 1) + '.gz', 'wb') as comp_log:
                 comp_log.writelines(old)
@@ -26,43 +25,43 @@ class GzTimedRotatingFileHandler(TimedRotatingFileHandler):
         if self.stream:
             self.stream.close()
             self.stream = None
-        currentTime = int(time.time())
-        dstNow = time.localtime(currentTime)[-1]
+        current_time = int(time.time())
+        dst_now = time.localtime(current_time)[-1]
         t = self.rolloverAt - self.interval
         if self.utc:
-            timeTuple = time.gmtime(t)
+            time_tuple = time.gmtime(t)
         else:
-            timeTuple = time.localtime(t)
-            dstThen = timeTuple[-1]
-            if dstNow != dstThen:
-                if dstNow:
+            time_tuple = time.localtime(t)
+            dst_then = time_tuple[-1]
+            if dst_now != dst_then:
+                if dst_now:
                     addend = 3600
                 else:
                     addend = -3600
-                timeTuple = time.localtime(t + addend)
-        dfn = self.baseFilename + "." + time.strftime(self.suffix, timeTuple)
+                time_tuple = time.localtime(t + addend)
+        dfn = self.baseFilename + "." + time.strftime(self.suffix, time_tuple)
         if os.path.exists(dfn):
             os.remove(dfn)
         if os.path.exists(self.baseFilename):
             os.rename(self.baseFilename, dfn)
-            self.doGzip(dfn)
+            self.do_gzip(dfn)
         if self.backupCount > 0:
             for s in self.getFilesToDelete():
                 os.remove(s)
         if not self.delay:
             self.stream = self._open()
-        newRolloverAt = self.computeRollover(currentTime)
-        while newRolloverAt <= currentTime:
-            newRolloverAt = newRolloverAt + self.interval
+        new_rollover_at = self.computeRollover(current_time)
+        while new_rollover_at <= current_time:
+            new_rollover_at = new_rollover_at + self.interval
         if (self.when == 'MIDNIGHT' or self.when.startswith('W')) and not self.utc:
-            dstAtRollover = time.localtime(newRolloverAt)[-1]
-            if dstNow != dstAtRollover:
-                if not dstNow:  # DST kicks in before next rollover, so we need to deduct an hour
+            ds_att_rollover = time.localtime(new_rollover_at)[-1]
+            if dst_now != ds_att_rollover:
+                if not dst_now:  # DST kicks in before next rollover, so we need to deduct an hour
                     addend = -3600
                 else:  # DST bows out before next rollover, so we need to add an hour
                     addend = 3600
-                newRolloverAt += addend
-        self.rolloverAt = newRolloverAt
+                new_rollover_at += addend
+        self.rolloverAt = new_rollover_at
 
 
 class LogBase(Singleton):
@@ -80,19 +79,18 @@ class LogBase(Singleton):
                  error=True,
                  warning=True,
                  ):
-
         self.info_name = info_name
         self.error_name = error_name
         self.warning_name = warning_name
         self.debug_name = debug_name
         self.path = dir_path
-        self.logger = logging.getLogger(logger_name)
-        self.debug = debug
-        self.warning = warning
-        self.error = error
-        self.info = info
-        self.detail = detail
         self.interval = interval
+        self._logger = logging.getLogger(logger_name)
+        self._debug = debug
+        self._warning = warning
+        self._error = error
+        self._info = info
+        self._detail = detail
 
     def __handler(self, log_name):
         handler = GzTimedRotatingFileHandler(self.path + log_name,
@@ -109,7 +107,7 @@ class LogBase(Singleton):
         :param log_level: 字符串
         :return: handler
         """
-        if self.detail:
+        if self._detail:
             formatter = logging.Formatter("%(asctime)s - %(filename)s - %(funcName)s - %(lineno)d - %(message)s",
                                           "%Y%m%d %H:%M:%S")
         else:
@@ -123,14 +121,14 @@ class LogBase(Singleton):
         handler.addFilter(_filter)
         return handler
 
-    def get_logger(self):
+    def _get_logger(self):
 
         # 添加此行，防止日志重复记录
-        if not self.logger.handlers:
+        if not self._logger.handlers:
             # 设置日志等级,默认是 DEBUG
-            self.logger.setLevel(logging.DEBUG)
+            self._logger.setLevel(logging.DEBUG)
 
-            levels = [self.debug, self.info, self.warning, self.error]
+            levels = [self._debug, self._info, self._warning, self._error]
             log_names = [self.debug_name, self.info_name, self.warning_name, self.error_name]
             levels_ = [10, 20, 30, 40]
 
@@ -139,10 +137,5 @@ class LogBase(Singleton):
                     _handler = self.__handler(log_names[i])
                     _handler = self.__filter_message(_handler, levels_[i])
                     # handler添加给日志对象
-                    self.logger.addHandler(_handler)
-        return self.logger
-
-    @staticmethod
-    def type_need(parm, type_):
-        if not isinstance(parm, type_):
-            raise TypeError(f'expect {type_},but got {type(parm)}')
+                    self._logger.addHandler(_handler)
+        return self._logger

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2019/02/22 13:44
-# @Author  : Liu Yalong
-# @File    : __init__.py
+
 from .timeout import TimeOut
 from .timeslimit import Concurrency
 from .singleton import Singleton

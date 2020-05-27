@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2019/11/12 14:14
-# @Author  : Liu Yalong
-# @File    : __main__.py
+
 import os
 import sys
 

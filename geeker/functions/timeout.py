@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2019/08/22 13:39
-# @Author  : Liu Yalong
-# @File    : __init__.py
+
 
 import ctypes
 import inspect

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2019/10/22 13:33
-# @Author  : Liu Yalong
-# @File    : __init__.py
+
 from .log_config import LogBase
 import os
 
@@ -71,3 +69,11 @@ class MyLog(LogBase):
         if not os.path.exists(log_path):
             os.makedirs(log_path)
         super(MyLog, self).__init__(dir_path=log_path, **kwargs)
+
+    def get_logger(self):
+        return self._get_logger()
+
+    @staticmethod
+    def type_need(parm, type_):
+        if not isinstance(parm, type_):
+            raise TypeError(f'expect {type_},but got {type(parm)}')

@@ -1,27 +1,28 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2019/7/2 14:58
-# @Author  : Liu Yalong
-# @File    : __init__.py.py
-import collections
+
 import datetime
 import functools
 import logging
 import random
 import re
-# import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 
-logger = logging.getLogger('schedule_lyl')
+try:
+    from collections.abc import Hashable
+except ImportError:
+    from collections import Hashable
+
+logger = logging.getLogger('schedule')
 
 
 class ScheduleError(Exception):
-    """Base schedule_lyl exception"""
+    """Base schedule exception"""
     pass
 
 
 class ScheduleValueError(ScheduleError):
-    """Base schedule_lyl value error"""
+    """Base schedule value error"""
     pass
 
 
@@ -47,13 +48,15 @@ class Scheduler(object):
     def __init__(self, ):
         self.jobs = []
         self.pool = None
+        self.max_worker = None  # Default len(self.jobs) * 2
 
     def start_thread(self, max_worker):
         if not max_worker:
-            max_worker = len(self.jobs) * 5
-        # print('max_worker:', max_worker)
+            self.max_worker = len(self.jobs) * 2
+        else:
+            self.max_worker = max_worker
 
-        self.pool = ThreadPoolExecutor(max_workers=max_worker)
+        self.pool = ThreadPoolExecutor(max_workers=self.max_worker)
 
     def run_pending(self):
         """
@@ -67,22 +70,9 @@ class Scheduler(object):
         """
 
         runnable_jobs = (job for job in self.jobs if job.should_run)
-        # for job in sorted(runnable_jobs):
-        # self._run_job(job)
-
-        ###################################################
 
         # Change the task to async
-        jobs_ = set()
-        for job in sorted(runnable_jobs):
-            jobs_.add(job)
-
-        # length = threading.active_count()
-        # print('当前线程数量：', length)
-
-        self.pool.map(self._run_job, jobs_)
-
-        ###################################################
+        self.pool.map(self._run_job, set(runnable_jobs))
 
     def run_all(self, delay_seconds=0):
         """
@@ -346,7 +336,7 @@ class Job(object):
         :param tags: A unique list of ``Hashable`` tags.
         :return: The invoked job instance
         """
-        if not all(isinstance(tag, collections.Hashable) for tag in tags):
+        if not all(isinstance(tag, Hashable) for tag in tags):
             raise TypeError('Tags must be hashable')
         self.tags.update(tags)
         return self
@@ -455,12 +445,9 @@ class Job(object):
         :return: The return value returned by the `job_func`
         """
         logger.info('Running job %s', self)
-        # ret = self.job_func()
         self.last_run = datetime.datetime.now()
-        # print('上次执行时间',self.last_run)
         self._schedule_next_run()
 
-        # print('即将执行程序')
         ret = self.job_func()
         return ret
 
@@ -533,7 +520,6 @@ class Job(object):
             # Let's see if we will still make that time we specified today
             if (self.next_run - datetime.datetime.now()).days >= 7:
                 self.next_run -= self.period
-        # print('下次执行时间', self.next_run)
 
 
 # The following methods are shortcuts for not having to

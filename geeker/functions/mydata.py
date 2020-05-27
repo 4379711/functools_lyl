@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2019/04/22 13:53
-# @Author  : Liu Yalong
-# @File    : mydata.py
+
 
 
 class MyDict:

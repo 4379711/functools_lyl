@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2019/3/15 14:14
-# @Author  : Liu Yalong
-# @File    : timeslimit.py
+
 from collections import deque
 import time
 import math
