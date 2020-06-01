@@ -61,7 +61,7 @@ class Client(MixParams):
         }
         url = OAUTH_URL_ENDPOINTS[MARKETPLACES[self.region]]
 
-        resp = request_api.post(url=url, headers=headers, data=json.dumps(data))
+        resp = request_api.post(url=url, headers=headers, data=data)
         return resp
 
     @property
