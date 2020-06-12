@@ -12,7 +12,8 @@ from .mws.Advertising import Account
 __all__ = ['MyType', 'MyLog', 'TimeOut',
            'schedule', 'mws', 'Concurrency',
            'Singleton', 'MyDict', 'run_time',
-           "retry", 'SponsoredProducts', 'Account'
+           "retry", 'SponsoredProducts', 'Account',
+           "IdGenerator"
            ]
 __UpdateTime__ = '2020/05/19 10:00'
 
@@ -217,4 +218,12 @@ __UpdateTime__ = '2020/05/19 10:00'
     #####################
     ad = Account.Client(client_id, client_secret, access_token, refresh_token, 'US',
                     profile_id=profile, sandbox=True, redirect_uri=redirect_uri)
+    
+    11 .分布式唯一ID生成器
+    
+    from geeker import IdGenerator
+    
+    id_generator =IdGenerator()
+    _id =id_generator.get_id()
+    
 """

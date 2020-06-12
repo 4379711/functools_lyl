@@ -247,3 +247,11 @@
     ad = Account.Client(client_id, client_secret, access_token, refresh_token, 'US',
                     profile_id=profile, sandbox=True, redirect_uri=redirect_uri)
 
+
+## 分布式唯一ID生成器
+    
+    from geeker import IdGenerator
+    
+    id_generator =IdGenerator()
+    _id =id_generator.get_id()
+    
