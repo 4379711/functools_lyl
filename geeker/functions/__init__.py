@@ -6,12 +6,28 @@ from .singleton import Singleton
 from .mydata import MyDict
 from functools import wraps
 import time
+import threading
+import os
+import psutil
 
 from colorama import init
 
 init(autoreset=True)
 
-__all__ = ['TimeOut', 'Concurrency', 'Singleton', 'MyDict', 'run_time', 'retry']
+__all__ = ['TimeOut', 'Concurrency', 'Singleton', 'MyDict', 'run_time', 'retry', 'show_memory_info']
+
+
+def show_memory_info():
+    """
+   显示当前 python 程序占用的内存大小
+    """
+    pid = os.getpid()
+    p = psutil.Process(pid)
+    info = p.memory_full_info()
+    memory = info.uss / 1024. / 1024
+    print("所有线程:", threading.enumerate())
+    print('线程总数:', threading.active_count())
+    print("共占用", memory, "MB")
 
 
 def retry(n: int, error_type: Exception = Exception):

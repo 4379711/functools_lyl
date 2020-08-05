@@ -38,9 +38,11 @@
         # 开启任务
         while True:
             schedule.run_pending()
-            # 此处可添加参数max_worker 控制任务的总数,如果定时任务较多,则需要增加此参数
+            
+            # 参数max_worker 控制任务的总数,默认是任务数的2倍.
             # 注意,如果设置一个较大值,请考虑内存是否允许
-            # schedule.run_pending(max_worker=10)
+           
+            # schedule.run_pending(max_worker=2)
             time.sleep(1)
             
 ------------     
@@ -255,3 +257,8 @@
     id_generator =IdGenerator()
     _id =id_generator.get_id()
     
+## 查看当前python进程占用的内存
+
+    from geeker import show_memory_info
+    
+    show_memory_info()

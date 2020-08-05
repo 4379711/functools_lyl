@@ -10,7 +10,7 @@ with open("README.md", "r", encoding='utf-8') as fh:
 
 setup(
     name='geeker',
-    version="1.3.3",
+    version="1.3.4",
     description=(
         "Many useful functions !"
     ),
@@ -43,7 +43,9 @@ setup(
 
     install_requires=['colorama',
                       'click',
-                      'requests', 'pandas'
+                      'requests',
+                      'pandas',
+                      'psutil'
                       ]
 )
 
