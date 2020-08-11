@@ -2,7 +2,7 @@
 
 from .timeout import TimeOut
 from .timeslimit import Concurrency
-from .singleton import Singleton
+from .singleton import Singleton, SingletonOverride
 from .mydata import MyDict
 from functools import wraps
 import time
@@ -14,7 +14,9 @@ from colorama import init
 
 init(autoreset=True)
 
-__all__ = ['TimeOut', 'Concurrency', 'Singleton', 'MyDict', 'run_time', 'retry', 'show_memory_info']
+__all__ = ['TimeOut', 'Concurrency', 'Singleton', 'SingletonOverride',
+           'MyDict', 'run_time', 'retry',
+           'show_memory_info']
 
 
 def show_memory_info():

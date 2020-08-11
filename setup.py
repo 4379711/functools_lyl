@@ -1,6 +1,7 @@
 # coding = utf-8
 import sys
 from setuptools import setup, find_packages
+from geeker import __Version__
 
 if sys.version_info < (3, 6, 0):
     raise RuntimeError("geeker requires Python 3.6.0+")
@@ -10,7 +11,7 @@ with open("README.md", "r", encoding='utf-8') as fh:
 
 setup(
     name='geeker',
-    version="1.3.5",
+    version=__Version__,
     description=(
         "Many useful functions !"
     ),
