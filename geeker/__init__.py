@@ -36,6 +36,8 @@ __UpdateTime__ = '2020/08/05 15:15'
 
         # 开启任务
         while True:
+            # thread_pool=False(默认)不会使用线程池,如果上个任务耗时很长,
+            # 在下一次任务启动时间点仍未完成,会造成下次任务延后
             schedule.run_pending()
              
             # 参数max_worker 控制任务的总数,默认是任务数的2倍.
