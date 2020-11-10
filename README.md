@@ -49,7 +49,8 @@
             
 ------------     
 
-## MyLog:将日志分日志等级记录,并自动压缩2019-11-11.info.log.gz
+## MyLog:
+#### 说明:将日志分日志等级记录,并自动压缩2019-11-11.info.log.gz
 
 #### 参数:
             :param dir_path: 日志记录的路径,默认是当前路径下的log文件夹
@@ -101,9 +102,10 @@
     
 ------------   
 
-## Concurrency :控制函数执行频率
+## Concurrency :
+#### 说明:控制函数执行频率
 
->(用于多线程模型,协程无效)
+>(仅用于多线程模型,协程无效)
 
 
         from geeker import Concurrency
@@ -130,7 +132,8 @@
 			
 ------------
 
-## run_time 此装饰器调控函数运行时间
+## run_time:
+#### 说明:此装饰器调控函数运行时间
         
         from geeker import runtime
         
@@ -148,16 +151,26 @@
 
 ------------
 
-##  Singleton 单例模式
+##  Singleton:
+#### 说明:单例模式,建议使用这个
 
     from geeker import Singleton
     # 实例的属性为第一次初始化时的属性
     class Test(Singleton):
         pass
 
+## SingletonOverride
+#### 说明:单例模式
+
+    from geeker import SingletonOverride
+    # 后面创建的实例属性会覆盖前者的实例属性
+    class Test(SingletonOverride):
+        pass
+
 ------------
 
-##  TimeOut 超时装饰器
+##  TimeOut:
+#### 说明:超时装饰器
 
 ### 注意:
 ##### 此装饰器需要额外的线程数量来控制任务执行,
@@ -180,7 +193,8 @@
 
 ------------
 	
-##  PyCrypt 加密-解密(已删除此项目)
+##  PyCrypt:
+#### 说明:加密-解密(已删除此项目)
 
         from geeker import PyCrypt      
         
@@ -190,7 +204,8 @@
 
 ------------
 
-##  MyType 类属性的类型检查
+##  MyType:
+#### 说明:类属性的类型检查
 
         from geeker import MyType  
         
@@ -204,19 +219,19 @@
                 
 ------------
           
-##  MWS相关api
+##  mws:
+#### 说明:亚马逊mws API接口
         from geeker import mws
 
         shipment = mws.OutboundShipments(...)
         resp = shipment.list_all_fulfillment_orders(...)
         data = resp.parsed
-        
 
 ------------
 
-##  特殊字典
+##  MyDict:
 ### 注意:
-##### 如需要转换成字典,需要使用dict()可直接转换,转换后可直接存mongo
+##### 如需要转换成字典,需要使用dict()可直接转换,转换后可直接存MongoDB
         
         from geeker import MyDict
         a=MyDict()
@@ -236,9 +251,8 @@
                 
 ------------
 
-## Advertising API 
-> 亚马逊广告API,目前仅实现SP部分
-
+## SponsoredProducts: 
+> 亚马逊广告API,SP接口
 
     from geeker import SponsoredProducts as sp
     ad = sp.ProductAds(client_id, client_secret, access_token, refresh_token, 'US',
@@ -246,21 +260,45 @@
     resp = ad.list_product_ads_ex()
     print(resp.json())
     
+## Account:
+> 亚马逊广告API,店铺接口
+
     #####################
     from geeker import Account
     ad = Account.Client(client_id, client_secret, access_token, refresh_token, 'US',
                     profile_id=profile, sandbox=True, redirect_uri=redirect_uri)
 
+------------
 
-## 分布式唯一ID生成器
+## IdGenerator:
+#### 说明:分布式唯一ID生成器
     
     from geeker import IdGenerator
     
     id_generator =IdGenerator()
     _id =id_generator.get_id()
-    
-## 查看当前python进程占用的内存
+
+------------
+
+## show_memory_info:
+#### 说明:查看当前python进程占用的内存
 
     from geeker import show_memory_info
     
     show_memory_info()
+
+------------
+
+## retry:
+#### 函数装饰器,捕获某个异常,重新执行,直到设置的最大次数,抛出RuntimeError
+
+    from geeker import retry
+    
+    @retry(5, ValueError)
+    def test():
+        int('asf')
+   
+------------
+
+
+

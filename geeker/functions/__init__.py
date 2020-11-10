@@ -32,7 +32,7 @@ def show_memory_info():
     print("共占用", memory, "MB")
 
 
-def retry(n: int, error_type: Exception = Exception):
+def retry(n: int, error_type=Exception):
     """
     捕获error_type异常进行重试执行函数n次
     :param n: int，重试次数

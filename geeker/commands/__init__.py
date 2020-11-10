@@ -1,55 +1,56 @@
 # -*- coding: utf-8 -*-
 
 import click
-from geeker import __Version__, readme, __UpdateTime__
+from geeker import __Version__, __UpdateTime__, __all__, __Description__
 
 
-@click.command(name='-v')
+@click.command(name='v')
 def version():
     """
-    查看当前版本
+    Current version.
     """
 
     click.echo(__Version__)
 
 
-@click.command(name='-t')
+@click.command(name='t')
 def time_stamp():
     """
-    查看最后更新时间
+    The last update time.
     """
 
     click.echo(__UpdateTime__)
 
 
-@click.command(name='-u')
-@click.option("-m", prompt="请输入模块名")  # prompt直接弹出一行，让用户输入
+@click.command(name='a')
+def about():
+    """
+    About problems .
+    """
+    click.echo(__Description__)
+
+
+@click.command(name='m')
+@click.option("--module", prompt="input module name")  # prompt功能:直接弹出一行，让用户输入
 def how_use(module):
     """
-    查看某模块的使用方式
-
+    How to use some module.
     """
-
-    all_modules_dict = readme()
-    tmp_ = all_modules_dict.get(module, None)
-    if not tmp_:
-        click.secho(f"ERROR: \tcan't find module <{module}>!", color='red')
-    else:
-        click.echo(tmp_)
+    tmp = 'https://github.com/4379711/functools_lyl#' + str(module).lower().replace(" ", '-')
+    click.echo('You can find answer in this url.')
+    click.echo(tmp)
 
 
-@click.command(name='-m')
+@click.command(name='M')
 def list_module():
     """
-    查看所有的模块
+    ALL modules .
     """
+    tmp = (i for i in __all__ if not i.startswith('__'))
+    for module in tmp:
+        click.echo(module)
 
-    all_modules_dict = readme()
-    modules = list(all_modules_dict.keys())
-    click.echo(modules)
 
-
-# 分组功能，将多个命令分组
 @click.group()
 def base_command():
     pass
@@ -59,6 +60,8 @@ def base_command():
 base_command.add_command(how_use)
 base_command.add_command(list_module)
 base_command.add_command(version)
+base_command.add_command(time_stamp)
+base_command.add_command(about)
 
 if __name__ == '__main__':
     base_command()

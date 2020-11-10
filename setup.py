@@ -1,10 +1,6 @@
 # coding = utf-8
-import sys
 from setuptools import setup, find_packages
 from geeker import __Version__
-
-if sys.version_info < (3, 6, 0):
-    raise RuntimeError("geeker requires Python 3.6.0+")
 
 with open("README.md", "r", encoding='utf-8') as fh:
     long_description = fh.read()
@@ -33,10 +29,12 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Software Development :: Libraries'
     ],
     # 指定入口
     entry_points={
+        # 添加命令行脚本
         'console_scripts': [
             'geeker=geeker.cmdline:execute'
         ],
@@ -49,7 +47,9 @@ setup(
                       'psutil'
                       ]
 )
+# pip install wheel
+# pip install twine
 
 # python setup.py check                 检查错误
-# python setup.py sdist bdist_wheel     编译
+# python setup.py sdist bdist_wheel     编译一个tar.gz包,一个wheel包
 # twine upload dist/*                   上传到pypi
