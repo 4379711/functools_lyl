@@ -107,7 +107,6 @@
 
 >(仅用于多线程模型,协程无效)
 
-
         from geeker import Concurrency
 
         # 每4秒执行5次abc()
@@ -193,16 +192,6 @@
 
 ------------
 	
-##  PyCrypt:
-#### 说明:加密-解密(已删除此项目)
-
-        from geeker import PyCrypt      
-        
-        pp=PyCrypt('16位密钥字符串..........')
-        aa=pp.encrypt('待加密的内容') 
-        bb =pp.decrypt('加密过的字节内容') 
-
-------------
 
 ##  MyType:
 #### 说明:类属性的类型检查
@@ -218,16 +207,7 @@
                 self.llll = value
                 
 ------------
-          
-##  mws:
-#### 说明:亚马逊mws API接口
-        from geeker import mws
 
-        shipment = mws.OutboundShipments(...)
-        resp = shipment.list_all_fulfillment_orders(...)
-        data = resp.parsed
-
-------------
 
 ##  MyDict:
 ### 注意:
@@ -249,25 +229,6 @@
             'key0': {'value0'}
             }
                 
-------------
-
-## SponsoredProducts: 
-> 亚马逊广告API,SP接口
-
-    from geeker import SponsoredProducts as sp
-    ad = sp.ProductAds(client_id, client_secret, access_token, refresh_token, 'US',
-                    profile_id=profile, sandbox=True)
-    resp = ad.list_product_ads_ex()
-    print(resp.json())
-    
-## Account:
-> 亚马逊广告API,店铺接口
-
-    #####################
-    from geeker import Account
-    ad = Account.Client(client_id, client_secret, access_token, refresh_token, 'US',
-                    profile_id=profile, sandbox=True, redirect_uri=redirect_uri)
-
 ------------
 
 ## IdGenerator:
