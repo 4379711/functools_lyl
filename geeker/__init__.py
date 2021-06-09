@@ -11,12 +11,11 @@ __all__ = ['MyType', 'MyLog', 'TimeOut',
            "retry", "IdGenerator", 'show_memory_info'
            ]
 
-__UpdateTime__ = '2021/04/13 09:59'
-__Version__ = "2.0"
+__UpdateTime__ = '2021/06/09 11:25'
+__Version__ = "2.1"
 __Author__ = 'liu YaLong'
 
 __Description__ = """
-If you has some problems ,please read README.MD on GITHUB 
-<https://github.com/4379711/functools_lyl/blob/master/README.md>                   
-or give me issues:
+If you has issues ,please read README.MD or
+fix it by yourself .
 """

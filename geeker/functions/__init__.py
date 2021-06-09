@@ -32,31 +32,28 @@ def show_memory_info():
     print("共占用", memory, "MB")
 
 
-def retry(n: int, error_type=Exception):
+def retry(retry_times: int, error_type: (tuple, Exception) = Exception, sleep_time: int = 0):
     """
-    捕获error_type异常进行重试执行函数n次
-    :param n: int，重试次数
-    :param error_type: Exception,需要捕获的错误类型
-    :return:
+    捕获指定类型异常进行重试执行函数retry_times次,每次执行间隔sleep秒
+    :param retry_times: 重试次数
+    :param sleep_time: 重试间隔(秒)
+    :param error_type: 需要捕获的错误类型
     """
 
-    def times(func):
+    def my_wraps0(func):
         @wraps(func)
-        def mywraps(*args, **kwargs):
-            error = None
-            for _ in range(n):
+        def my_wraps1(*args, **kwargs):
+            for _ in range(retry_times + 1):
                 try:
-                    # 执行函数
                     result = func(*args, **kwargs)
                     return result
                 except error_type as e:
-                    error = e
+                    if _ == retry_times:
+                        raise e
+                    time.sleep(sleep_time)
+        return my_wraps1
 
-            raise RuntimeError(f'执行<{func.__name__}{*args, kwargs}>\t重试{n}次后仍然失败！\n错误信息: {error}\n')
-
-        return mywraps
-
-    return times
+    return my_wraps0
 
 
 def run_time(func):

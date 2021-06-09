@@ -9,20 +9,19 @@ setup(
     name='geeker',
     version=__Version__,
     description=(
-        "Many useful functions !"
+        "Some useful functions !"
     ),
     long_description=long_description,
     long_description_content_type="text/markdown",
     author='liuyalong',
     author_email='4379711@qq.com',
     maintainer='liuyalong',
-    maintainer_email='4379711@qq.com',
     license='MIT License',
     packages=find_packages(),
     platforms=["all"],
     url='https://github.com/4379711/functools_lyl',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Operating System :: OS Independent',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
@@ -42,8 +41,6 @@ setup(
 
     install_requires=['colorama',
                       'click',
-                      'requests',
-                      'pandas',
                       'psutil'
                       ]
 )

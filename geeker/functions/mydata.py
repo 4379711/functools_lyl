@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-
 class MyDict:
 
     def __getattr__(self, item):
